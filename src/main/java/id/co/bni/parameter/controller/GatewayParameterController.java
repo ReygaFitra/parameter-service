@@ -32,9 +32,35 @@ public class GatewayParameterController {
         return gatewayParameterService.create(req);
     }
 
+    @PostMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseService update(@RequestBody @Valid GatewayParameterRequest req, BindingResult result) {
+        ResponseService response = new ResponseService();
+        if (!RestValidationHelper.fieldValidation(result, response)) {
+            return response;
+        }
+        return gatewayParameterService.update(req);
+    }
+
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseService delete(@RequestBody @Valid GatewayParameterRequest req, BindingResult result) {
+        ResponseService response = new ResponseService();
+        if (!RestValidationHelper.fieldValidation(result, response)) {
+            return response;
+        }
+        return gatewayParameterService.delete(req);
+    }
+
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseService findByTransCode(@RequestParam("transCode") String transCode) {
+    public ResponseService findByTransCode(@RequestParam("transCode") @NotBlank @NotBlank String transCode) {
         return gatewayParameterService.findByTransCode(transCode);
+    }
+
+    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseService findAll() {
+        return gatewayParameterService.findAll();
     }
 }

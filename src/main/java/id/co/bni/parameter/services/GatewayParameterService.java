@@ -1,9 +1,10 @@
 package id.co.bni.parameter.services;
 
+import id.co.bni.parameter.cache.ParameterLoader;
 import id.co.bni.parameter.dto.ResponseService;
 import id.co.bni.parameter.dto.request.GatewayParameterRequest;
 import id.co.bni.parameter.entity.GatewayParameterChannel;
-import id.co.bni.parameter.repository.GatewayParameterChannelRepository;
+import id.co.bni.parameter.repository.GatewayParameterChannelRepo;
 import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
 import lombok.RequiredArgsConstructor;
@@ -11,47 +12,85 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class GatewayParameterService {
 
-    private final GatewayParameterChannelRepository gatewayParameterChannelRepository;
+    private final GatewayParameterChannelRepo gatewayParameterChannelRepo;
+    private final ParameterLoader parameterLoader;
+    private final CacheService cacheService;
 
     @Transactional
     public ResponseService create(GatewayParameterRequest req) {
-        if (!validateNewDataById(req.getTransCode())) {
+        if (gatewayParameterChannelRepo.findById(req.getTransCode()).isPresent())
             return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, "");
-        }
-        if (req.getIsUsingProxy() && (req.getProxyIp() == null || "".equals(req.getProxyIp()))) {
+
+        if (req.getIsUsingProxy() && (req.getProxyIp() == null || "".equals(req.getProxyIp())))
             return ResponseUtil.setResponseSuccessCustom(RestConstants.RESPONSE.WRONG_FORMAT_DATA, null, "proxyIp - must not be blank or null", "");
-        }
-        if (req.getIsUsingProxy() && (req.getProxyPort() == null || "".equals(req.getProxyPort()))) {
+
+        if (req.getIsUsingProxy() && (req.getProxyPort() == null || "".equals(req.getProxyPort())))
             return ResponseUtil.setResponseSuccessCustom(RestConstants.RESPONSE.WRONG_FORMAT_DATA, null, "proxyPort - must not be blank or null", "");
-        }
-        GatewayParameterChannel gatewayParameterChannel = new GatewayParameterChannel();
-        gatewayParameterChannel.setTransCode(req.getTransCode());
-        gatewayParameterChannel.setSystemId(req.getSystemId());
-        gatewayParameterChannel.setUrl(req.getUrl());
-        gatewayParameterChannel.setIsUsingProxy(req.getIsUsingProxy());
-        gatewayParameterChannel.setProxyIp(req.getProxyIp());
-        gatewayParameterChannel.setProxyPort(req.getProxyPort());
-        gatewayParameterChannelRepository.save(gatewayParameterChannel);
+
+        GatewayParameterChannel gatewayParameterChannel = GatewayParameterChannel.builder()
+                .transCode(req.getTransCode())
+                .systemId(req.getSystemId())
+                .url(req.getUrl())
+                .isUsingProxy(req.getIsUsingProxy())
+                .proxyIp(req.getProxyIp())
+                .proxyPort(req.getProxyPort())
+                .build();
+        gatewayParameterChannelRepo.save(gatewayParameterChannel);
+        loadCache(gatewayParameterChannel);
         return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, gatewayParameterChannel, "");
     }
 
     @Transactional
+    public ResponseService update(GatewayParameterRequest req) {
+        if (gatewayParameterChannelRepo.findById(req.getTransCode()).isPresent())
+            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, "");
+
+        GatewayParameterChannel gatewayParameterChannel = GatewayParameterChannel.builder()
+                .transCode(req.getTransCode())
+                .systemId(req.getSystemId())
+                .url(req.getUrl())
+                .isUsingProxy(req.getIsUsingProxy())
+                .proxyIp(req.getProxyIp())
+                .proxyPort(req.getProxyPort())
+                .build();
+        gatewayParameterChannelRepo.saveAndFlush(gatewayParameterChannel);
+        loadCache(gatewayParameterChannel);
+        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, gatewayParameterChannel, "");
+    }
+
+    @Transactional
+    public ResponseService delete(GatewayParameterRequest req) {
+        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCode(req.getTransCode());
+        if (channel == null)
+            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, "");
+
+        gatewayParameterChannelRepo.delete(channel);
+        return cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getTransCode());
+    }
+
     public ResponseService findByTransCode(String transCode) {
-        GatewayParameterChannel gatewayParameterChannel = gatewayParameterChannelRepository.findByTransCode(transCode);
+        GatewayParameterRequest gatewayParameterChannel = parameterLoader.getGatewayParam(transCode);
         if (gatewayParameterChannel == null) return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
         return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, gatewayParameterChannel, "");
     }
 
-    private boolean validateNewDataById(String transCode) {
-        boolean isValid = true;
-        GatewayParameterChannel channel = gatewayParameterChannelRepository.findByTransCode(transCode);
-        if (channel != null) isValid = false;
-        return isValid;
+    public ResponseService findAll() {
+        Collection<GatewayParameterRequest> collection = parameterLoader.getAllGatewayParam();
+        if (collection.isEmpty()) return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
+        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, collection, "");
+    }
+
+    private void loadCache(GatewayParameterChannel gatewayParameterChannel) {
+        ConcurrentHashMap<String, GatewayParameterRequest> hGatewayParameter = new ConcurrentHashMap<>();
+        hGatewayParameter.put(gatewayParameterChannel.getTransCode(), gatewayParameterChannel.toGatewayParameterResponse());
+        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, gatewayParameterChannel.getTransCode(), hGatewayParameter);
     }
 }

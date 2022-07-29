@@ -45,4 +45,9 @@ public class RestConstants {
         String REQUEST_ID = "X-Request-ID";
         String CORRELATION_ID = "X-Correlation-ID";
     }
+
+    public interface CACHE_NAME {
+        String PARAMETER = "parameter";
+        String GATEWAY_PARAMETER = "gateway-parameter";
+    }
 }

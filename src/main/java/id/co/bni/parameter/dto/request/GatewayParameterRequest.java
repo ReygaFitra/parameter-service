@@ -7,12 +7,13 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Data
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class GatewayParameterRequest {
+public class GatewayParameterRequest implements Serializable {
     @NotNull
     @NotBlank
     private String transCode;
