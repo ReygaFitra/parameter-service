@@ -54,7 +54,7 @@ public class GatewayParameterController {
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseService findByTransCode(@RequestParam("transCode") @NotBlank @NotBlank String transCode) {
+    public ResponseService findByTransCode(@RequestParam("transCode") @NotBlank @NotNull String transCode) {
         return gatewayParameterService.findByTransCode(transCode);
     }
 
