@@ -50,27 +50,25 @@ public class GatewayParameterService {
 
     @Transactional
     public ResponseService update(GatewayParameterRequest req) {
-        if (gatewayParameterChannelRepo.findById(req.getTransCode()).isPresent())
-            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, "");
+        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCode(req.getTransCode());
+        if (channel == null)
+            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
 
-        GatewayParameterChannel gatewayParameterChannel = GatewayParameterChannel.builder()
-                .transCode(req.getTransCode())
-                .systemId(req.getSystemId())
-                .url(req.getUrl())
-                .isUsingProxy(req.getIsUsingProxy())
-                .proxyIp(req.getProxyIp())
-                .proxyPort(req.getProxyPort())
-                .build();
-        gatewayParameterChannelRepo.saveAndFlush(gatewayParameterChannel);
-        loadCache(gatewayParameterChannel);
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, gatewayParameterChannel, "");
+        channel.setSystemId(req.getSystemId());
+        channel.setUrl(req.getUrl());
+        channel.setIsUsingProxy(req.getIsUsingProxy());
+        channel.setProxyIp(req.getProxyIp());
+        channel.setProxyPort(req.getProxyPort());
+        gatewayParameterChannelRepo.saveAndFlush(channel);
+        loadCache(channel);
+        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, channel, "");
     }
 
     @Transactional
     public ResponseService delete(GatewayParameterRequest req) {
         GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCode(req.getTransCode());
         if (channel == null)
-            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, "");
+            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
 
         gatewayParameterChannelRepo.delete(channel);
         return cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getTransCode());
