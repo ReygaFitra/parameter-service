@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -42,6 +43,8 @@ public class GatewayParameterService {
                 .isUsingProxy(req.getIsUsingProxy())
                 .proxyIp(req.getProxyIp())
                 .proxyPort(req.getProxyPort())
+                .createdAt(new Date())
+                .updatedAt(new Date())
                 .build();
         gatewayParameterChannelRepo.save(gatewayParameterChannel);
         loadCache(gatewayParameterChannel);
@@ -59,6 +62,7 @@ public class GatewayParameterService {
         channel.setIsUsingProxy(req.getIsUsingProxy());
         channel.setProxyIp(req.getProxyIp());
         channel.setProxyPort(req.getProxyPort());
+        channel.setUpdatedAt(new Date());
         gatewayParameterChannelRepo.saveAndFlush(channel);
         loadCache(channel);
         return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, channel, "");

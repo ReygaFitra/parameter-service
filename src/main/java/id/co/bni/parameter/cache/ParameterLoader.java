@@ -2,7 +2,9 @@ package id.co.bni.parameter.cache;
 
 import com.hazelcast.core.HazelcastInstance;
 import id.co.bni.parameter.dto.request.GatewayParameterRequest;
+import id.co.bni.parameter.dto.request.McpParameterRequest;
 import id.co.bni.parameter.repository.GatewayParameterChannelRepo;
+import id.co.bni.parameter.repository.McpParameterRepo;
 import id.co.bni.parameter.util.RestConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +21,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ParameterLoader {
     private final HazelcastInstance hazelcastInstance;
     private final GatewayParameterChannelRepo parameterChannelRepository;
+    private final McpParameterRepo mcpParameterRepo;
 
     @Async
     void load() {
         loadGatewayParameter();
+        loadMcpParameter();
     }
 
     private void loadGatewayParameter() {
@@ -35,6 +39,18 @@ public class ParameterLoader {
             throw e;
         }
         clearPackHazelcast(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, hGatewayParameter);
+    }
+
+    private void loadMcpParameter() {
+        ConcurrentHashMap<String, McpParameterRequest> hMcpParameter = new ConcurrentHashMap<>();
+        try {
+            mcpParameterRepo.findAll()
+                    .forEach(mcpParameter -> hMcpParameter.put(mcpParameter.getMcpId(), mcpParameter.toMcpParameterResponse()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
+        clearPackHazelcast(RestConstants.CACHE_NAME.MCP_PARAMETER, hMcpParameter);
     }
 
     private void clearPackHazelcast(String cacheName, Map map) {
@@ -58,6 +74,17 @@ public class ParameterLoader {
     public GatewayParameterRequest getGatewayParam(String transCode) {
         Map<String, GatewayParameterRequest> h = (Map<String, GatewayParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.GATEWAY_PARAMETER);
         return h.get(transCode);
+    }
+
+
+    public Collection<McpParameterRequest> getAllMcpParam() {
+        Map<String, McpParameterRequest> h = (Map<String, McpParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.MCP_PARAMETER);
+        return h.values();
+    }
+
+    public McpParameterRequest getMcpParam(String mcpId) {
+        Map<String, McpParameterRequest> h = (Map<String, McpParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.MCP_PARAMETER);
+        return h.get(mcpId);
     }
 
     private Map<?, ?> checkAndGet(String cacheName) {
