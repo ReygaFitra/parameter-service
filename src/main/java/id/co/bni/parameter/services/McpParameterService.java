@@ -2,9 +2,7 @@ package id.co.bni.parameter.services;
 
 import id.co.bni.parameter.cache.ParameterLoader;
 import id.co.bni.parameter.dto.ResponseService;
-import id.co.bni.parameter.dto.request.GatewayParameterRequest;
 import id.co.bni.parameter.dto.request.McpParameterRequest;
-import id.co.bni.parameter.entity.GatewayParameterChannel;
 import id.co.bni.parameter.entity.McpParameter;
 import id.co.bni.parameter.repository.McpParameterRepo;
 import id.co.bni.parameter.util.ResponseUtil;
