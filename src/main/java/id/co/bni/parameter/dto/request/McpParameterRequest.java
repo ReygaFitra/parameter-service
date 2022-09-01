@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -28,6 +29,6 @@ public class McpParameterRequest implements Serializable {
     @NotNull
     @NotBlank
     private String billerName;
-    @NotNull
+    @Valid
     private List<McpParameterFeeResponse> dataFee;
 }

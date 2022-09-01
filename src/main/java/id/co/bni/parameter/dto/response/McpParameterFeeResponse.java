@@ -1,5 +1,6 @@
 package id.co.bni.parameter.dto.response;
 
+import id.co.bni.parameter.validation.annotation.NumberOnly;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,5 +20,6 @@ public class McpParameterFeeResponse implements Serializable {
     private String currency;
     @NotNull
     @NotBlank
+    @NumberOnly
     private String fee;
 }
