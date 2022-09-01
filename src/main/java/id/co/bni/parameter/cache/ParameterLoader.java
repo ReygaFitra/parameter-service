@@ -3,15 +3,21 @@ package id.co.bni.parameter.cache;
 import com.hazelcast.core.HazelcastInstance;
 import id.co.bni.parameter.dto.request.GatewayParameterRequest;
 import id.co.bni.parameter.dto.request.McpParameterRequest;
+import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
+import id.co.bni.parameter.entity.McpParameterFee;
 import id.co.bni.parameter.repository.GatewayParameterChannelRepo;
+import id.co.bni.parameter.repository.McpParameterFeeRepo;
 import id.co.bni.parameter.repository.McpParameterRepo;
 import id.co.bni.parameter.util.RestConstants;
+import id.co.bni.parameter.util.RestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,6 +28,7 @@ public class ParameterLoader {
     private final HazelcastInstance hazelcastInstance;
     private final GatewayParameterChannelRepo parameterChannelRepository;
     private final McpParameterRepo mcpParameterRepo;
+    private final McpParameterFeeRepo mcpParameterFeeRepo;
 
     @Async
     void load() {
@@ -45,7 +52,22 @@ public class ParameterLoader {
         ConcurrentHashMap<String, McpParameterRequest> hMcpParameter = new ConcurrentHashMap<>();
         try {
             mcpParameterRepo.findAll()
-                    .forEach(mcpParameter -> hMcpParameter.put(mcpParameter.getMcpId(), mcpParameter.toMcpParameterResponse()));
+                    .forEach(mcpParameter ->
+                            {
+                                List<McpParameterFeeResponse> listFee = null;
+                                List<McpParameterFee> listData = mcpParameterFeeRepo.findByMcpId(mcpParameter.getMcpId());
+                                if (listData != null && !listData.isEmpty()) {
+                                    listFee = new ArrayList<>();
+                                    for (McpParameterFee a : listData) {
+                                        listFee.add(McpParameterFeeResponse.builder()
+                                                        .currency(a.getCurrency())
+                                                        .fee(RestUtil.df.format(a.getFee().doubleValue()))
+                                                .build());
+                                    }
+                                }
+                                hMcpParameter.put(mcpParameter.getMcpId(), mcpParameter.toMcpParameterResponse(listFee));
+                            }
+                    );
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw e;

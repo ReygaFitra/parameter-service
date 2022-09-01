@@ -1,8 +1,13 @@
 package id.co.bni.parameter.util;
 
+import java.text.DecimalFormat;
+
 public class RestUtil {
     private RestUtil() {
     }
+
+    public static DecimalFormat df = new DecimalFormat("###");
+
     public enum RESPONSE_ICONS {
         LACK_OF_FUND("0398", "Saldo rekening tidak mencukupi untuk melakukan transaksi. Info BNI Call 1500046");
         private String code;

@@ -1,6 +1,7 @@
 package id.co.bni.parameter.entity;
 
 import id.co.bni.parameter.dto.request.McpParameterRequest;
+import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -37,12 +39,13 @@ public class McpParameter {
     @LastModifiedDate
     private Date updatedAt;
 
-    public McpParameterRequest toMcpParameterResponse() {
+    public McpParameterRequest toMcpParameterResponse(List<McpParameterFeeResponse> listFee) {
         return McpParameterRequest.builder()
                 .mcpId(mcpId)
                 .regionCode(regionCode)
                 .billerCode(billerCode)
                 .billerName(billerName)
+                .dataFee(listFee)
                 .build();
     }
 }
