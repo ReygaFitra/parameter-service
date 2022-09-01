@@ -13,6 +13,6 @@ public class NumberOnlyValidator implements ConstraintValidator<NumberOnly, Stri
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext ctx) {
-        return s != null && s.matches("\\d");
+        return s != null && s.matches("\\d+");
     }
 }
