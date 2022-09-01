@@ -1,10 +1,12 @@
 package id.co.bni.parameter.cache;
 
 import com.hazelcast.core.HazelcastInstance;
+import id.co.bni.parameter.dto.request.ChannelParameterRequest;
 import id.co.bni.parameter.dto.request.GatewayParameterRequest;
 import id.co.bni.parameter.dto.request.McpParameterRequest;
 import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
 import id.co.bni.parameter.entity.McpParameterFee;
+import id.co.bni.parameter.repository.ChannelParameterRepo;
 import id.co.bni.parameter.repository.GatewayParameterChannelRepo;
 import id.co.bni.parameter.repository.McpParameterFeeRepo;
 import id.co.bni.parameter.repository.McpParameterRepo;
@@ -29,11 +31,13 @@ public class ParameterLoader {
     private final GatewayParameterChannelRepo parameterChannelRepository;
     private final McpParameterRepo mcpParameterRepo;
     private final McpParameterFeeRepo mcpParameterFeeRepo;
+    private final ChannelParameterRepo channelParameterRepo;
 
     @Async
     void load() {
         loadGatewayParameter();
         loadMcpParameter();
+        loadChannelParameter();
     }
 
     private void loadGatewayParameter() {
@@ -75,6 +79,18 @@ public class ParameterLoader {
         clearPackHazelcast(RestConstants.CACHE_NAME.MCP_PARAMETER, hMcpParameter);
     }
 
+    private void loadChannelParameter() {
+        ConcurrentHashMap<String, ChannelParameterRequest> hChannelParameter = new ConcurrentHashMap<>();
+        try {
+            channelParameterRepo.findAll()
+                    .forEach(channelParameter -> hChannelParameter.put(channelParameter.getChannelId(), channelParameter.toChannelParameterResponse()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
+        clearPackHazelcast(RestConstants.CACHE_NAME.CHANNEL_PARAMETER, hChannelParameter);
+    }
+
     private void clearPackHazelcast(String cacheName, Map map) {
         hazelcastInstance.getMap(cacheName).evictAll();
         hazelcastInstance.getMap(cacheName).clear();
@@ -107,6 +123,16 @@ public class ParameterLoader {
     public McpParameterRequest getMcpParam(String mcpId) {
         Map<String, McpParameterRequest> h = (Map<String, McpParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.MCP_PARAMETER);
         return h.get(mcpId);
+    }
+
+    public Collection<ChannelParameterRequest> getAllChannelParam() {
+        Map<String, ChannelParameterRequest> h = (Map<String, ChannelParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.CHANNEL_PARAMETER);
+        return h.values();
+    }
+
+    public ChannelParameterRequest getChannelParam(String channelId) {
+        Map<String, ChannelParameterRequest> h = (Map<String, ChannelParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.CHANNEL_PARAMETER);
+        return h.get(channelId);
     }
 
     private Map<?, ?> checkAndGet(String cacheName) {

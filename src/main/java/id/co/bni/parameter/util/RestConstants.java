@@ -47,8 +47,8 @@ public class RestConstants {
     }
 
     public interface CACHE_NAME {
-        String PARAMETER = "parameter";
         String GATEWAY_PARAMETER = "gateway-parameter";
         String MCP_PARAMETER = "mcp-parameter";
+        String CHANNEL_PARAMETER = "channel-parameter";
     }
 }
