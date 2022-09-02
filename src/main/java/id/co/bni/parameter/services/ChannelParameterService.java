@@ -69,7 +69,7 @@ public class ChannelParameterService {
         return cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getChannelId());
     }
 
-    public ResponseService findByTransCode(String channelId) {
+    public ResponseService findByChannelId(String channelId) {
         ChannelParameterRequest channelParameterRequest = parameterLoader.getChannelParam(channelId);
         if (channelParameterRequest == null) return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
         return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, channelParameterRequest, "");

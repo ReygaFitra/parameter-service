@@ -54,8 +54,8 @@ public class ChannelParameterController {
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseService findByTransCode(@RequestParam("transCode") @NotBlank @NotNull String transCode) {
-        return channelParameterService.findByTransCode(transCode);
+    public ResponseService findByChannelId(@RequestParam("channelId") @NotBlank @NotNull String channelId) {
+        return channelParameterService.findByChannelId(channelId);
     }
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
