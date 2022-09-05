@@ -39,6 +39,10 @@ public class McpParameterService {
         if (mcpParameterRepo.findById(req.getMcpId()).isPresent())
             return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, "");
 
+        if (!req.getIsMatch() && req.getDetail().size() > 1) {
+            return ResponseUtil.setResponseError("12", "Detail data cannot be more than 1 ", null, "");
+        }
+
         McpParameter mcpParameter = McpParameter.builder()
                 .mcpId(req.getMcpId())
                 .isMatch(req.getIsMatch())
@@ -70,6 +74,10 @@ public class McpParameterService {
         McpParameter mcpParameter = mcpParameterRepo.findByMcpId(req.getMcpId());
         if (mcpParameter == null)
             return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
+
+        if (!req.getIsMatch() && req.getDetail().size() > 1) {
+            return ResponseUtil.setResponseError("12", "Detail data cannot be more than 1 ", null, "");
+        }
 
         mcpParameter.setBillerName(req.getBillerName());
         mcpParameter.setIsMatch(req.getIsMatch());
