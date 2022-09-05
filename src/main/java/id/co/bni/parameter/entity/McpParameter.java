@@ -1,6 +1,7 @@
 package id.co.bni.parameter.entity;
 
 import id.co.bni.parameter.dto.request.McpParameterRequest;
+import id.co.bni.parameter.dto.response.McpParameterDetailResponse;
 import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,12 +23,11 @@ public class McpParameter {
     @Id
     @Column(name = "MCP_ID", nullable = false, length = 50)
     private String mcpId;
-    @Column(name = "BILLER_CODE", nullable = false, length = 10)
-    private String billerCode;
-    @Column(name = "REGION_CODE", nullable = false, length = 10)
-    private String regionCode;
+
     @Column(name = "BILLER_NAME", nullable = false, length = 100)
     private String billerName;
+
+    private Boolean isMatch;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -39,12 +39,12 @@ public class McpParameter {
     @LastModifiedDate
     private Date updatedAt;
 
-    public McpParameterRequest toMcpParameterResponse(List<McpParameterFeeResponse> listFee) {
+    public McpParameterRequest toMcpParameterResponse(List<McpParameterFeeResponse> listFee, List<McpParameterDetailResponse> listDet) {
         return McpParameterRequest.builder()
                 .mcpId(mcpId)
-                .regionCode(regionCode)
-                .billerCode(billerCode)
+                .isMatch(isMatch)
                 .billerName(billerName)
+                .detail(listDet)
                 .dataFee(listFee)
                 .build();
     }

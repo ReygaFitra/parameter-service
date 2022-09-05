@@ -1,5 +1,6 @@
 package id.co.bni.parameter.dto.request;
 
+import id.co.bni.parameter.dto.response.McpParameterDetailResponse;
 import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,13 +23,11 @@ public class McpParameterRequest implements Serializable {
     private String mcpId;
     @NotNull
     @NotBlank
-    private String billerCode;
-    @NotNull
-    @NotBlank
-    private String regionCode;
-    @NotNull
-    @NotBlank
     private String billerName;
+    @NotNull
+    private Boolean isMatch;
+    @Valid
+    private List<McpParameterDetailResponse> detail;
     @Valid
     private List<McpParameterFeeResponse> dataFee;
 }

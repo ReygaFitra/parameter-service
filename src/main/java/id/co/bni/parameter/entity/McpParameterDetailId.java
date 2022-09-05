@@ -11,7 +11,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class McpParameterFeeId implements Serializable {
+public class McpParameterDetailId implements Serializable {
     private String mcpId;
-    private String currency;
+    private String trxField;
+    private String startWith;
 }

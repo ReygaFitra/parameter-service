@@ -4,12 +4,11 @@ import com.hazelcast.core.HazelcastInstance;
 import id.co.bni.parameter.dto.request.ChannelParameterRequest;
 import id.co.bni.parameter.dto.request.GatewayParameterRequest;
 import id.co.bni.parameter.dto.request.McpParameterRequest;
+import id.co.bni.parameter.dto.response.McpParameterDetailResponse;
 import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
+import id.co.bni.parameter.entity.McpParameterDetail;
 import id.co.bni.parameter.entity.McpParameterFee;
-import id.co.bni.parameter.repository.ChannelParameterRepo;
-import id.co.bni.parameter.repository.GatewayParameterChannelRepo;
-import id.co.bni.parameter.repository.McpParameterFeeRepo;
-import id.co.bni.parameter.repository.McpParameterRepo;
+import id.co.bni.parameter.repository.*;
 import id.co.bni.parameter.util.RestConstants;
 import id.co.bni.parameter.util.RestUtil;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +31,7 @@ public class ParameterLoader {
     private final McpParameterRepo mcpParameterRepo;
     private final McpParameterFeeRepo mcpParameterFeeRepo;
     private final ChannelParameterRepo channelParameterRepo;
+    private final McpParameterDetailRepo mcpParameterDetailRepo;
 
     @Async
     void load() {
@@ -58,18 +58,32 @@ public class ParameterLoader {
             mcpParameterRepo.findAll()
                     .forEach(mcpParameter ->
                             {
+                                List<McpParameterDetailResponse> listDet = null;
+                                List<McpParameterDetail> listDataDet = mcpParameterDetailRepo.findByMcpId(mcpParameter.getMcpId());
+                                if (listDataDet != null && !listDataDet.isEmpty()) {
+                                    listDet = new ArrayList<>();
+                                    for (McpParameterDetail a : listDataDet) {
+                                        listDet.add(McpParameterDetailResponse.builder()
+                                                        .trxField(a.getTrxField())
+                                                        .startWith(a.getStartWith())
+                                                        .billerCode(a.getBillerCode())
+                                                        .regionCode(a.getRegionCode())
+                                                .build());
+                                    }
+                                }
+
                                 List<McpParameterFeeResponse> listFee = null;
-                                List<McpParameterFee> listData = mcpParameterFeeRepo.findByMcpId(mcpParameter.getMcpId());
-                                if (listData != null && !listData.isEmpty()) {
+                                List<McpParameterFee> listDataFee = mcpParameterFeeRepo.findByMcpId(mcpParameter.getMcpId());
+                                if (listDataFee != null && !listDataFee.isEmpty()) {
                                     listFee = new ArrayList<>();
-                                    for (McpParameterFee a : listData) {
+                                    for (McpParameterFee a : listDataFee) {
                                         listFee.add(McpParameterFeeResponse.builder()
                                                         .currency(a.getCurrency())
                                                         .fee(RestUtil.df.format(a.getFee().doubleValue()))
                                                 .build());
                                     }
                                 }
-                                hMcpParameter.put(mcpParameter.getMcpId(), mcpParameter.toMcpParameterResponse(listFee));
+                                hMcpParameter.put(mcpParameter.getMcpId(), mcpParameter.toMcpParameterResponse(listFee, listDet));
                             }
                     );
         } catch (Exception e) {
