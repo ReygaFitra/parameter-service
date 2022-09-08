@@ -54,8 +54,8 @@ public class ChannelParameterController {
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseService findByChannelId(@RequestParam("channelId") @NotBlank @NotNull String channelId) {
-        return channelParameterService.findByChannelId(channelId);
+    public ResponseService findByChannelIdAndSystemId(@RequestParam("channelId") @NotBlank @NotNull String channelId, @RequestParam("systemId") @NotBlank @NotNull String systemId) {
+        return channelParameterService.findByChannelIdAndSystemId(channelId, systemId);
     }
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)

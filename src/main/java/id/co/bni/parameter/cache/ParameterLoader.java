@@ -96,8 +96,9 @@ public class ParameterLoader {
     private void loadChannelParameter() {
         ConcurrentHashMap<String, ChannelParameterRequest> hChannelParameter = new ConcurrentHashMap<>();
         try {
+            // id = channelId + systemId
             channelParameterRepo.findAll()
-                    .forEach(channelParameter -> hChannelParameter.put(channelParameter.getChannelId(), channelParameter.toChannelParameterResponse()));
+                    .forEach(channelParameter -> hChannelParameter.put(channelParameter.getChannelId()+channelParameter.getSystemId(), channelParameter.toChannelParameterResponse()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw e;
@@ -144,9 +145,9 @@ public class ParameterLoader {
         return h.values();
     }
 
-    public ChannelParameterRequest getChannelParam(String channelId) {
+    public ChannelParameterRequest getChannelParam(String channelIdAndSystemId) {
         Map<String, ChannelParameterRequest> h = (Map<String, ChannelParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.CHANNEL_PARAMETER);
-        return h.get(channelId);
+        return h.get(channelIdAndSystemId);
     }
 
     private Map<?, ?> checkAndGet(String cacheName) {

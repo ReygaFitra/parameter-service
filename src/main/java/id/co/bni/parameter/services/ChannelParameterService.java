@@ -74,8 +74,8 @@ public class ChannelParameterService {
         return cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getChannelId());
     }
 
-    public ResponseService findByChannelId(String channelId) {
-        ChannelParameterRequest channelParameterRequest = parameterLoader.getChannelParam(channelId);
+    public ResponseService findByChannelIdAndSystemId(String channelId, String systemId) {
+        ChannelParameterRequest channelParameterRequest = parameterLoader.getChannelParam(channelId+systemId);
         if (channelParameterRequest == null) return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
         return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, channelParameterRequest, "");
     }
@@ -88,7 +88,7 @@ public class ChannelParameterService {
 
     private void loadCache(ChannelParameter channelParameter) {
         ConcurrentHashMap<String, ChannelParameterRequest> hChannelParameter = new ConcurrentHashMap<>();
-        hChannelParameter.put(channelParameter.getChannelId(), channelParameter.toChannelParameterResponse());
-        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.CHANNEL_PARAMETER, channelParameter.getChannelId(), hChannelParameter);
+        hChannelParameter.put(channelParameter.getChannelId()+channelParameter.getSystemId(), channelParameter.toChannelParameterResponse());
+        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.CHANNEL_PARAMETER, channelParameter.getChannelId()+channelParameter.getSystemId(), hChannelParameter);
     }
 }
