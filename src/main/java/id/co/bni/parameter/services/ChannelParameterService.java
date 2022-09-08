@@ -35,6 +35,7 @@ public class ChannelParameterService {
 
         ChannelParameter channelParameter = ChannelParameter.builder()
                 .channelId(req.getChannelId())
+                .systemId(req.getSystemId())
                 .branch(req.getBranch())
                 .teller(req.getTeller())
                 .overrideFlag(req.getOverrideFlag())
