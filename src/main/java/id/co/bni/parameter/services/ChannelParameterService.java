@@ -4,6 +4,7 @@ import id.co.bni.parameter.cache.ParameterLoader;
 import id.co.bni.parameter.dto.ResponseService;
 import id.co.bni.parameter.dto.request.ChannelParameterRequest;
 import id.co.bni.parameter.entity.ChannelParameter;
+import id.co.bni.parameter.entity.ChannelParameterId;
 import id.co.bni.parameter.repository.ChannelParameterRepo;
 import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
@@ -26,7 +27,10 @@ public class ChannelParameterService {
 
     @Transactional
     public ResponseService create(ChannelParameterRequest req) {
-        if (channelParameterRepo.findById(req.getChannelId()).isPresent())
+        if (channelParameterRepo.findById(ChannelParameterId.builder()
+                        .channelId(req.getChannelId())
+                        .systemId(req.getSystemId())
+                .build()).isPresent())
             return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, "");
 
         ChannelParameter channelParameter = ChannelParameter.builder()
@@ -45,7 +49,7 @@ public class ChannelParameterService {
 
     @Transactional
     public ResponseService update(ChannelParameterRequest req) {
-        ChannelParameter channel = channelParameterRepo.findByChannelId(req.getChannelId());
+        ChannelParameter channel = channelParameterRepo.findByChannelIdAndSystemId(req.getChannelId(), req.getSystemId());
         if (channel == null)
             return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
 
@@ -61,7 +65,7 @@ public class ChannelParameterService {
 
     @Transactional
     public ResponseService delete(ChannelParameterRequest req) {
-        ChannelParameter channel = channelParameterRepo.findByChannelId(req.getChannelId());
+        ChannelParameter channel = channelParameterRepo.findByChannelIdAndSystemId(req.getChannelId(), req.getSystemId());
         if (channel == null)
             return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
 

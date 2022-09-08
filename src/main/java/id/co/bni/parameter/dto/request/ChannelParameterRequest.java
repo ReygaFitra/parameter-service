@@ -21,6 +21,10 @@ public class ChannelParameterRequest implements Serializable {
 
     @NotNull
     @NotBlank
+    private String systemId;
+
+    @NotNull
+    @NotBlank
     @NumberOnly
     private String branch;
 

@@ -16,10 +16,15 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Entity(name = "CHANNEL_PARAMETER")
+@IdClass(ChannelParameterId.class)
 public class ChannelParameter {
     @Id
     @Column(name = "CHANNEL_ID", nullable = false, length = 20)
     private String channelId;
+
+    @Id
+    @Column(name = "SYSTEM_ID", nullable = false, length = 30)
+    private String systemId;
 
     @Column(name = "BRANCH", nullable = false, length = 10)
     private String branch;
@@ -46,6 +51,7 @@ public class ChannelParameter {
     public ChannelParameterRequest toChannelParameterResponse() {
         return ChannelParameterRequest.builder()
                 .channelId(channelId)
+                .systemId(systemId)
                 .branch(branch)
                 .teller(teller)
                 .overrideFlag(overrideFlag)
