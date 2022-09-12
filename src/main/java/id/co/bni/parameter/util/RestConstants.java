@@ -50,5 +50,6 @@ public class RestConstants {
         String GATEWAY_PARAMETER = "gateway-parameter";
         String MCP_PARAMETER = "mcp-parameter";
         String CHANNEL_PARAMETER = "channel-parameter";
+        String KEY_PARAMETER = "key-parameter";
     }
 }

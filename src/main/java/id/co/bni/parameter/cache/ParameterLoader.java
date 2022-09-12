@@ -3,6 +3,7 @@ package id.co.bni.parameter.cache;
 import com.hazelcast.core.HazelcastInstance;
 import id.co.bni.parameter.dto.request.ChannelParameterRequest;
 import id.co.bni.parameter.dto.request.GatewayParameterRequest;
+import id.co.bni.parameter.dto.request.KeyParameterRequest;
 import id.co.bni.parameter.dto.request.McpParameterRequest;
 import id.co.bni.parameter.dto.response.McpParameterDetailResponse;
 import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
@@ -32,12 +33,14 @@ public class ParameterLoader {
     private final McpParameterFeeRepo mcpParameterFeeRepo;
     private final ChannelParameterRepo channelParameterRepo;
     private final McpParameterDetailRepo mcpParameterDetailRepo;
+    private final KeyParameterRepo keyParameterRepo;
 
     @Async
     void load() {
         loadGatewayParameter();
         loadMcpParameter();
         loadChannelParameter();
+        loadKeyParameter();
     }
 
     private void loadGatewayParameter() {
@@ -106,6 +109,18 @@ public class ParameterLoader {
         clearPackHazelcast(RestConstants.CACHE_NAME.CHANNEL_PARAMETER, hChannelParameter);
     }
 
+    private void loadKeyParameter() {
+        ConcurrentHashMap<String, KeyParameterRequest> hKeyParameter = new ConcurrentHashMap<>();
+        try {
+            keyParameterRepo.findAll()
+                    .forEach(keyParameter -> hKeyParameter.put(keyParameter.getKey(), keyParameter.toKeyParameterResponse()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
+        clearPackHazelcast(RestConstants.CACHE_NAME.KEY_PARAMETER, hKeyParameter);
+    }
+
     private void clearPackHazelcast(String cacheName, Map map) {
         hazelcastInstance.getMap(cacheName).evictAll();
         hazelcastInstance.getMap(cacheName).clear();
@@ -148,6 +163,16 @@ public class ParameterLoader {
     public ChannelParameterRequest getChannelParam(String channelIdAndSystemId) {
         Map<String, ChannelParameterRequest> h = (Map<String, ChannelParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.CHANNEL_PARAMETER);
         return h.get(channelIdAndSystemId);
+    }
+
+    public Collection<KeyParameterRequest> getAllKeyParam() {
+        Map<String, KeyParameterRequest> h = (Map<String, KeyParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.KEY_PARAMETER);
+        return h.values();
+    }
+
+    public KeyParameterRequest getKeyParam(String key) {
+        Map<String, KeyParameterRequest> h = (Map<String, KeyParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.KEY_PARAMETER);
+        return h.get(key);
     }
 
     private Map<?, ?> checkAndGet(String cacheName) {
