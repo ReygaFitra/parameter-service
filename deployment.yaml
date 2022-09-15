@@ -33,7 +33,7 @@ spec:
             - name: TZ
               value: Asia/Jakarta
             - name: HZ_JET_ENABLED
-              value: true
+              value: "true"
             - name: DB_HOST
               value: "192.168.143.93"
             - name: DB_PORT
