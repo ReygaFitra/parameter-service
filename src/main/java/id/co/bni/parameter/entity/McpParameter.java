@@ -24,9 +24,6 @@ public class McpParameter {
     @Column(name = "MCP_ID", nullable = false, length = 50)
     private String mcpId;
 
-    @Column(name = "BILLER_NAME", nullable = false, length = 100)
-    private String billerName;
-
     private Boolean isMatch;
 
     @Column(nullable = false, updatable = false)
@@ -43,7 +40,6 @@ public class McpParameter {
         return McpParameterRequest.builder()
                 .mcpId(mcpId)
                 .isMatch(isMatch)
-                .billerName(billerName)
                 .detail(listDet)
                 .dataFee(listFee)
                 .build();

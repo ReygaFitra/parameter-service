@@ -18,29 +18,41 @@ import javax.persistence.IdClass;
 @Entity(name = "MCP_PARAMETER_DETAIL")
 @IdClass(McpParameterDetailId.class)
 public class McpParameterDetail {
-//    @Id
+    //    @Id
 //    @GeneratedValue(generator = "system-uuid2")
 //    @GenericGenerator(name = "system-uuid2", strategy = "uuid2")
 //    private String id;
     @Id
     @Column(name = "MCP_ID", nullable = false, length = 50)
     private String mcpId;
+
     @Id
     @Column(name = "TRX_FIELD", nullable = false, length = 30)
     private String trxField;
+
     @Id
-    @Column(name = "START_WITH", nullable = false, length = 20)
-    private String startWith;
+    @Column(name = "MATCH_REGEX", nullable = false, length = 20)
+    private String matchRegex;
+
+    @Column(name = "POSITION", nullable = false, length = 5)
+    private String position;
+
     @Column(name = "BILLER_CODE", nullable = false, length = 10)
     private String billerCode;
+
+    @Column(name = "BILLER_NAME", nullable = false, length = 100)
+    private String billerName;
+
     @Column(name = "REGION_CODE", nullable = false, length = 10)
     private String regionCode;
 
     public McpParameterDetailResponse toMcpDetailResponse() {
         return McpParameterDetailResponse.builder()
                 .trxField(trxField)
-                .startWith(startWith)
+                .match(matchRegex)
+                .position(position)
                 .billerCode(billerCode)
+                .billerName(billerName)
                 .regionCode(regionCode)
                 .build();
     }

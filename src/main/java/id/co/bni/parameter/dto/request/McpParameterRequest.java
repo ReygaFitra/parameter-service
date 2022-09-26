@@ -22,9 +22,6 @@ public class McpParameterRequest implements Serializable {
     @NotBlank
     private String mcpId;
     @NotNull
-    @NotBlank
-    private String billerName;
-    @NotNull
     private Boolean isMatch;
     @Valid
     private List<McpParameterDetailResponse> detail;

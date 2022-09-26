@@ -14,5 +14,5 @@ import java.io.Serializable;
 public class McpParameterDetailId implements Serializable {
     private String mcpId;
     private String trxField;
-    private String startWith;
+    private String matchRegex;
 }

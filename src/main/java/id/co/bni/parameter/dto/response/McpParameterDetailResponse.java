@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -21,10 +19,16 @@ public class McpParameterDetailResponse implements Serializable {
     private String trxField;
     @NotNull
     @NotBlank
-    private String startWith;
+    private String match;
+    @NotNull
+    @NotBlank
+    private String position;
     @NotNull
     @NotBlank
     private String billerCode;
+    @NotNull
+    @NotBlank
+    private String billerName;
     @NotNull
     @NotBlank
     private String regionCode;

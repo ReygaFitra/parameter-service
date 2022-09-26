@@ -46,7 +46,6 @@ public class McpParameterService {
         McpParameter mcpParameter = McpParameter.builder()
                 .mcpId(req.getMcpId())
                 .isMatch(req.getIsMatch())
-                .billerName(req.getBillerName())
                 .createdAt(new Date())
                 .updatedAt(new Date())
                 .build();
@@ -55,8 +54,10 @@ public class McpParameterService {
         req.getDetail().forEach(detail -> mcpParameterDetailRepo.save(McpParameterDetail.builder()
                 .mcpId(mcpParameter.getMcpId())
                         .trxField(detail.getTrxField())
-                        .startWith(detail.getStartWith())
+                        .matchRegex(detail.getMatch())
+                        .position(detail.getPosition())
                         .billerCode(detail.getBillerCode())
+                        .billerName(detail.getBillerName())
                         .regionCode(detail.getRegionCode())
                 .build()));
 
@@ -79,7 +80,6 @@ public class McpParameterService {
             return ResponseUtil.setResponseError("12", "Detail data cannot be more than 1 ", null, "");
         }
 
-        mcpParameter.setBillerName(req.getBillerName());
         mcpParameter.setIsMatch(req.getIsMatch());
         mcpParameter.setUpdatedAt(new Date());
         mcpParameterRepo.saveAndFlush(mcpParameter);
@@ -99,8 +99,10 @@ public class McpParameterService {
         req.getDetail().forEach(detail -> mcpParameterDetailRepo.save(McpParameterDetail.builder()
                 .mcpId(mcpParameter.getMcpId())
                 .trxField(detail.getTrxField())
-                .startWith(detail.getStartWith())
+                .matchRegex(detail.getMatch())
+                .position(detail.getPosition())
                 .billerCode(detail.getBillerCode())
+                .billerName(detail.getBillerName())
                 .regionCode(detail.getRegionCode())
                 .build()));
 

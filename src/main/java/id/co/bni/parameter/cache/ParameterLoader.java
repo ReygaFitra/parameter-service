@@ -68,8 +68,10 @@ public class ParameterLoader {
                                     for (McpParameterDetail a : listDataDet) {
                                         listDet.add(McpParameterDetailResponse.builder()
                                                         .trxField(a.getTrxField())
-                                                        .startWith(a.getStartWith())
+                                                        .match(a.getMatchRegex())
+                                                        .position(a.getPosition())
                                                         .billerCode(a.getBillerCode())
+                                                        .billerName(a.getBillerName())
                                                         .regionCode(a.getRegionCode())
                                                 .build());
                                     }
