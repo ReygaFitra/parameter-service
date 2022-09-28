@@ -18,7 +18,7 @@ import java.util.Date;
 @Entity(name = "KEY_PARAMETER")
 public class KeyParameter {
     @Id
-    @Column(name = "KEY_", nullable = false, length = 20)
+    @Column(name = "KEY_", nullable = false, length = 100)
     private String key;
     @Column(name = "VALUE_", length = 200)
     private String value;
