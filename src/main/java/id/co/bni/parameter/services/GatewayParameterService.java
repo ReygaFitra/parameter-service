@@ -9,6 +9,8 @@ import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -26,15 +28,15 @@ public class GatewayParameterService {
     private final CacheService cacheService;
 
     @Transactional
-    public ResponseService create(GatewayParameterRequest req) {
+    public ResponseEntity<ResponseService> create(GatewayParameterRequest req) {
         if (gatewayParameterChannelRepo.findById(req.getTransCode()).isPresent())
-            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, "");
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.FOUND);
 
         if (req.getIsUsingProxy() && (req.getProxyIp() == null || "".equals(req.getProxyIp())))
-            return ResponseUtil.setResponseSuccessCustom(RestConstants.RESPONSE.WRONG_FORMAT_DATA, null, "proxyIp - must not be blank or null", "");
+            return new ResponseEntity<>(ResponseUtil.setResponseSuccessCustom(RestConstants.RESPONSE.WRONG_FORMAT_DATA, null, "proxyIp - must not be blank or null", ""), HttpStatus.BAD_REQUEST);
 
         if (req.getIsUsingProxy() && (req.getProxyPort() == null || "".equals(req.getProxyPort())))
-            return ResponseUtil.setResponseSuccessCustom(RestConstants.RESPONSE.WRONG_FORMAT_DATA, null, "proxyPort - must not be blank or null", "");
+            return new ResponseEntity<>(ResponseUtil.setResponseSuccessCustom(RestConstants.RESPONSE.WRONG_FORMAT_DATA, null, "proxyPort - must not be blank or null", ""), HttpStatus.BAD_REQUEST);
 
         GatewayParameterChannel gatewayParameterChannel = GatewayParameterChannel.builder()
                 .transCode(req.getTransCode())
@@ -48,14 +50,14 @@ public class GatewayParameterService {
                 .build();
         gatewayParameterChannelRepo.save(gatewayParameterChannel);
         loadCache(gatewayParameterChannel);
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, gatewayParameterChannel, "");
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, gatewayParameterChannel, ""), HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseService update(GatewayParameterRequest req) {
+    public ResponseEntity<ResponseService> update(GatewayParameterRequest req) {
         GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCode(req.getTransCode());
         if (channel == null)
-            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         channel.setSystemId(req.getSystemId());
         channel.setUrl(req.getUrl());
@@ -65,29 +67,29 @@ public class GatewayParameterService {
         channel.setUpdatedAt(new Date());
         gatewayParameterChannelRepo.saveAndFlush(channel);
         loadCache(channel);
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, channel, "");
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, channel, ""), HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseService delete(GatewayParameterRequest req) {
+    public ResponseEntity<ResponseService> delete(GatewayParameterRequest req) {
         GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCode(req.getTransCode());
         if (channel == null)
-            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         gatewayParameterChannelRepo.delete(channel);
-        return cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getTransCode());
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getTransCode()), HttpStatus.OK);
     }
 
-    public ResponseService findByTransCode(String transCode) {
+    public ResponseEntity<ResponseService> findByTransCode(String transCode) {
         GatewayParameterRequest gatewayParameterChannel = parameterLoader.getGatewayParam(transCode);
-        if (gatewayParameterChannel == null) return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, gatewayParameterChannel, "");
+        if (gatewayParameterChannel == null) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, gatewayParameterChannel, ""), HttpStatus.OK);
     }
 
-    public ResponseService findAll() {
+    public ResponseEntity<ResponseService> findAll() {
         Collection<GatewayParameterRequest> collection = parameterLoader.getAllGatewayParam();
-        if (collection.isEmpty()) return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, collection, "");
+        if (collection.isEmpty()) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, collection, ""), HttpStatus.OK);
     }
 
     private void loadCache(GatewayParameterChannel gatewayParameterChannel) {

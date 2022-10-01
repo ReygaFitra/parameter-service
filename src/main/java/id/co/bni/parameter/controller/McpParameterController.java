@@ -6,7 +6,9 @@ import id.co.bni.parameter.services.McpParameterService;
 import id.co.bni.parameter.util.RestValidationHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,43 +26,43 @@ public class McpParameterController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseService create(@RequestBody @Valid McpParameterRequest req, BindingResult result) {
+    public ResponseEntity<ResponseService> create(@RequestBody @Valid McpParameterRequest req, BindingResult result) {
         ResponseService response = new ResponseService();
         if (!RestValidationHelper.fieldValidation(result, response)) {
-            return response;
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         return mcpParameterService.create(req);
     }
 
     @PostMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseService update(@RequestBody @Valid McpParameterRequest req, BindingResult result) {
+    public ResponseEntity<ResponseService> update(@RequestBody @Valid McpParameterRequest req, BindingResult result) {
         ResponseService response = new ResponseService();
         if (!RestValidationHelper.fieldValidation(result, response)) {
-            return response;
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         return mcpParameterService.update(req);
     }
 
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseService delete(@RequestBody @Valid McpParameterRequest req, BindingResult result) {
+    public ResponseEntity<ResponseService> delete(@RequestBody @Valid McpParameterRequest req, BindingResult result) {
         ResponseService response = new ResponseService();
         if (!RestValidationHelper.fieldValidation(result, response)) {
-            return response;
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         return mcpParameterService.delete(req);
     }
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseService findByTransCode(@RequestParam("mcpId") @NotBlank @NotNull String mcpId) {
+    public ResponseEntity<ResponseService> findByTransCode(@RequestParam("mcpId") @NotBlank @NotNull String mcpId) {
         return mcpParameterService.findByMcpId(mcpId);
     }
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseService findAll() {
+    public ResponseEntity<ResponseService> findAll() {
         return mcpParameterService.findAll();
     }
 }

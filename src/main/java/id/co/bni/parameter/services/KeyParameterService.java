@@ -9,6 +9,8 @@ import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,9 +27,9 @@ public class KeyParameterService {
     private final CacheService cacheService;
 
     @Transactional
-    public ResponseService create(KeyParameterRequest req) {
+    public ResponseEntity<ResponseService> create(KeyParameterRequest req) {
         if (keyParameterRepo.findById(req.getKey()).isPresent())
-            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, "");
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.FOUND);
 
         KeyParameter keyParameter = KeyParameter.builder()
                 .key(req.getKey())
@@ -38,43 +40,43 @@ public class KeyParameterService {
                 .build();
         keyParameterRepo.save(keyParameter);
         loadCache(keyParameter);
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, keyParameter, "");
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, keyParameter, ""), HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseService update(KeyParameterRequest req) {
+    public ResponseEntity<ResponseService> update(KeyParameterRequest req) {
         KeyParameter keyParameter = keyParameterRepo.findByKey(req.getKey());
         if (keyParameter == null)
-            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         keyParameter.setValue(req.getValue());
         keyParameter.setDesc(req.getDesc());
         keyParameter.setUpdatedAt(new Date());
         keyParameterRepo.saveAndFlush(keyParameter);
         loadCache(keyParameter);
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, keyParameter, "");
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, keyParameter, ""), HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseService delete(KeyParameterRequest req) {
+    public ResponseEntity<ResponseService> delete(KeyParameterRequest req) {
         KeyParameter keyParameter = keyParameterRepo.findByKey(req.getKey());
         if (keyParameter == null)
-            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         keyParameterRepo.delete(keyParameter);
-        return cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getKey());
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getKey()), HttpStatus.OK);
     }
 
-    public ResponseService findByKey(String key) {
+    public ResponseEntity<ResponseService> findByKey(String key) {
         KeyParameterRequest keyParam = parameterLoader.getKeyParam(key);
-        if (keyParam == null) return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, keyParam, "");
+        if (keyParam == null) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, keyParam, ""), HttpStatus.OK);
     }
 
-    public ResponseService findAll() {
+    public ResponseEntity<ResponseService> findAll() {
         Collection<KeyParameterRequest> collection = parameterLoader.getAllKeyParam();
-        if (collection.isEmpty()) return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, collection, "");
+        if (collection.isEmpty()) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, collection, ""), HttpStatus.OK);
     }
 
     private void loadCache(KeyParameter keyParameter) {

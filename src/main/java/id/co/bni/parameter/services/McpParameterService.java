@@ -15,6 +15,8 @@ import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -35,12 +37,12 @@ public class McpParameterService {
     private final McpParameterDetailRepo mcpParameterDetailRepo;
 
     @Transactional
-    public ResponseService create(McpParameterRequest req) {
+    public ResponseEntity<ResponseService> create(McpParameterRequest req) {
         if (mcpParameterRepo.findById(req.getMcpId()).isPresent())
-            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, "");
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.FOUND);
 
         if (!req.getIsMatch() && req.getDetail().size() > 1) {
-            return ResponseUtil.setResponseError("12", "Detail data cannot be more than 1 ", null, "");
+            return new ResponseEntity<>(ResponseUtil.setResponseError("12", "Detail data cannot be more than 1 ", null, ""), HttpStatus.BAD_REQUEST);
         }
 
         McpParameter mcpParameter = McpParameter.builder()
@@ -67,17 +69,17 @@ public class McpParameterService {
                 .fee(BigDecimal.valueOf(Double.parseDouble(fee.getFee())))
                 .build()));
         loadCache(mcpParameter, req.getDataFee(), req.getDetail());
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, mcpParameter, "");
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, mcpParameter, ""), HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseService update(McpParameterRequest req) {
+    public ResponseEntity<ResponseService> update(McpParameterRequest req) {
         McpParameter mcpParameter = mcpParameterRepo.findByMcpId(req.getMcpId());
         if (mcpParameter == null)
-            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         if (!req.getIsMatch() && req.getDetail().size() > 1) {
-            return ResponseUtil.setResponseError("12", "Detail data cannot be more than 1 ", null, "");
+            return new ResponseEntity<>(ResponseUtil.setResponseError("12", "Detail data cannot be more than 1 ", null, ""), HttpStatus.BAD_REQUEST);
         }
 
         mcpParameter.setIsMatch(req.getIsMatch());
@@ -107,14 +109,14 @@ public class McpParameterService {
                 .build()));
 
         loadCache(mcpParameter, req.getDataFee(), req.getDetail());
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, mcpParameter, "");
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, mcpParameter, ""), HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseService delete(McpParameterRequest req) {
+    public ResponseEntity<ResponseService> delete(McpParameterRequest req) {
         McpParameter mcpParameter = mcpParameterRepo.findByMcpId(req.getMcpId());
         if (mcpParameter == null)
-            return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         mcpParameterRepo.delete(mcpParameter);
 
@@ -124,19 +126,19 @@ public class McpParameterService {
         List<McpParameterDetail> listDet = mcpParameterDetailRepo.findByMcpId(req.getMcpId());
         if (listDet != null && !listDet.isEmpty()) mcpParameterDetailRepo.deleteAll(listDet);
 
-        return cacheService.reloadByKey(RestConstants.CACHE_NAME.MCP_PARAMETER, req.getMcpId());
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.MCP_PARAMETER, req.getMcpId()), HttpStatus.OK);
     }
 
-    public ResponseService findByMcpId(String mcpId) {
+    public ResponseEntity<ResponseService> findByMcpId(String mcpId) {
         McpParameterRequest mcpParameterRequest = parameterLoader.getMcpParam(mcpId);
-        if (mcpParameterRequest == null) return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, mcpParameterRequest, "");
+        if (mcpParameterRequest == null) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, mcpParameterRequest, ""), HttpStatus.OK);
     }
 
-    public ResponseService findAll() {
+    public ResponseEntity<ResponseService> findAll() {
         Collection<McpParameterRequest> collection = parameterLoader.getAllMcpParam();
-        if (collection.isEmpty()) return ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "");
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, collection, "");
+        if (collection.isEmpty()) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, collection, ""), HttpStatus.OK);
     }
 
     private void loadCache(McpParameter mcpParameter, List<McpParameterFeeResponse> listFee, List<McpParameterDetailResponse> listDet) {

@@ -6,7 +6,9 @@ import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,8 +23,8 @@ public class LoaderController {
 
     @PostMapping(value = "/reload", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseService create() {
+    public ResponseEntity<ResponseService> create() {
         loader.load();
-        return ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, "", "Parameter Success Reload");
+        return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, "", "Parameter Success Reload"), HttpStatus.OK);
     }
 }

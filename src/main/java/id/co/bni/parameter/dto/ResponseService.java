@@ -10,5 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseService {
-    Object status, statusCode, message, data;
+    private Object status;
+    private Object statusCode;
+    private Object message;
+    private Object data;
 }
