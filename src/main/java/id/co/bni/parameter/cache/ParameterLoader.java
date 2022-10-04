@@ -46,8 +46,12 @@ public class ParameterLoader {
     private void loadGatewayParameter() {
         ConcurrentHashMap<String, GatewayParameterRequest> hGatewayParameter = new ConcurrentHashMap<>();
         try {
+            // id = transCode + systemIdOrMcpId
             parameterChannelRepository.findAll()
-                    .forEach(gatewayParam -> hGatewayParameter.put(gatewayParam.getTransCode(), gatewayParam.toGatewayParameterResponse()));
+                    .forEach(gatewayParam -> {
+                        String id = gatewayParam.getTransCode()+gatewayParam.getSystemIdOrMcpId();
+                        hGatewayParameter.put(id, gatewayParam.toGatewayParameterResponse());
+                    });
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw e;

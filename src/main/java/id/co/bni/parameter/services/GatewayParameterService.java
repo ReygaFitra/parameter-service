@@ -4,6 +4,7 @@ import id.co.bni.parameter.cache.ParameterLoader;
 import id.co.bni.parameter.dto.ResponseService;
 import id.co.bni.parameter.dto.request.GatewayParameterRequest;
 import id.co.bni.parameter.entity.GatewayParameterChannel;
+import id.co.bni.parameter.entity.GatewayParameterChannelId;
 import id.co.bni.parameter.repository.GatewayParameterChannelRepo;
 import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
@@ -29,7 +30,10 @@ public class GatewayParameterService {
 
     @Transactional
     public ResponseEntity<ResponseService> create(GatewayParameterRequest req) {
-        if (gatewayParameterChannelRepo.findById(req.getTransCode()).isPresent())
+        if (gatewayParameterChannelRepo.findById(GatewayParameterChannelId.builder()
+                        .transCode(req.getTransCode())
+                        .systemIdOrMcpId(req.getSystemIdOrmcpId())
+                .build()).isPresent())
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.FOUND);
 
         if (req.getIsUsingProxy() && (req.getProxyIp() == null || "".equals(req.getProxyIp())))
@@ -40,7 +44,7 @@ public class GatewayParameterService {
 
         GatewayParameterChannel gatewayParameterChannel = GatewayParameterChannel.builder()
                 .transCode(req.getTransCode())
-                .systemId(req.getSystemId())
+                .systemIdOrMcpId(req.getSystemIdOrmcpId())
                 .url(req.getUrl())
                 .isUsingProxy(req.getIsUsingProxy())
                 .proxyIp(req.getProxyIp())
@@ -55,11 +59,10 @@ public class GatewayParameterService {
 
     @Transactional
     public ResponseEntity<ResponseService> update(GatewayParameterRequest req) {
-        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCode(req.getTransCode());
+        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(req.getTransCode(), req.getSystemIdOrmcpId());
         if (channel == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
-        channel.setSystemId(req.getSystemId());
         channel.setUrl(req.getUrl());
         channel.setIsUsingProxy(req.getIsUsingProxy());
         channel.setProxyIp(req.getProxyIp());
@@ -72,7 +75,7 @@ public class GatewayParameterService {
 
     @Transactional
     public ResponseEntity<ResponseService> delete(GatewayParameterRequest req) {
-        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCode(req.getTransCode());
+        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(req.getTransCode(), req.getSystemIdOrmcpId());
         if (channel == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
@@ -80,8 +83,8 @@ public class GatewayParameterService {
         return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getTransCode()), HttpStatus.OK);
     }
 
-    public ResponseEntity<ResponseService> findByTransCode(String transCode) {
-        GatewayParameterRequest gatewayParameterChannel = parameterLoader.getGatewayParam(transCode);
+    public ResponseEntity<ResponseService> findByTransCodeAndSystemIdOrmcpId(String transCode, String systemIdOrmcpId) {
+        GatewayParameterRequest gatewayParameterChannel = parameterLoader.getGatewayParam(transCode+systemIdOrmcpId);
         if (gatewayParameterChannel == null) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, gatewayParameterChannel, ""), HttpStatus.OK);
     }
@@ -94,7 +97,7 @@ public class GatewayParameterService {
 
     private void loadCache(GatewayParameterChannel gatewayParameterChannel) {
         ConcurrentHashMap<String, GatewayParameterRequest> hGatewayParameter = new ConcurrentHashMap<>();
-        hGatewayParameter.put(gatewayParameterChannel.getTransCode(), gatewayParameterChannel.toGatewayParameterResponse());
-        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, gatewayParameterChannel.getTransCode(), hGatewayParameter);
+        hGatewayParameter.put(gatewayParameterChannel.getTransCode()+gatewayParameterChannel.getSystemIdOrMcpId(), gatewayParameterChannel.toGatewayParameterResponse());
+        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, gatewayParameterChannel.getTransCode()+gatewayParameterChannel.getSystemIdOrMcpId(), hGatewayParameter);
     }
 }

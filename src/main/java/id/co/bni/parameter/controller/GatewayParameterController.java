@@ -56,8 +56,8 @@ public class GatewayParameterController {
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> findByTransCode(@RequestParam("transCode") @NotBlank @NotNull String transCode) {
-        return gatewayParameterService.findByTransCode(transCode);
+    public ResponseEntity<ResponseService> findByTransCode(@RequestParam("transCode") @NotBlank @NotNull String transCode, @RequestParam("systemIdOrmcpId") @NotBlank @NotNull String systemIdOrmcpId) {
+        return gatewayParameterService.findByTransCodeAndSystemIdOrmcpId(transCode, systemIdOrmcpId);
     }
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)

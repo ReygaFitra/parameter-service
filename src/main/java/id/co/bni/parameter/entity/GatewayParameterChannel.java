@@ -16,13 +16,15 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Entity(name = "GATEWAY_PARAMETER_CHANNEL")
+@IdClass(GatewayParameterChannelId.class)
 public class GatewayParameterChannel {
     @Id
     @Column(name = "TRANS_CODE", nullable = false, length = 20)
     private String transCode;
-    @Column(name = "SYSTEM_ID", length = 50)
-    private String systemId;
-    @Column(name = "URL", length = 150)
+    @Id
+    @Column(name = "SYSTEM_ID_OR_MCP_ID", nullable = false, length = 50)
+    private String systemIdOrMcpId;
+    @Column(name = "URL", length = 200)
     private String url;
     @Column(nullable = false)
     private Boolean isUsingProxy;
@@ -44,7 +46,7 @@ public class GatewayParameterChannel {
     public GatewayParameterRequest toGatewayParameterResponse() {
         return GatewayParameterRequest.builder()
                 .transCode(transCode)
-                .systemId(systemId)
+                .systemIdOrmcpId(systemIdOrMcpId)
                 .url(url)
                 .isUsingProxy(isUsingProxy)
                 .proxyIp(proxyIp)
