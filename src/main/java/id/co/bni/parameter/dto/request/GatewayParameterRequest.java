@@ -22,7 +22,7 @@ public class GatewayParameterRequest implements Serializable {
     @NotNull
     @NotBlank
     @Size(max = 50)
-    private String systemIdOrmcpId;
+    private String systemIdOrMcpId;
     @NotNull
     @NotBlank
     @Size(max = 200)

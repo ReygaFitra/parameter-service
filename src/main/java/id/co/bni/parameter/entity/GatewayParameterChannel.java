@@ -46,7 +46,7 @@ public class GatewayParameterChannel {
     public GatewayParameterRequest toGatewayParameterResponse() {
         return GatewayParameterRequest.builder()
                 .transCode(transCode)
-                .systemIdOrmcpId(systemIdOrMcpId)
+                .systemIdOrMcpId(systemIdOrMcpId)
                 .url(url)
                 .isUsingProxy(isUsingProxy)
                 .proxyIp(proxyIp)

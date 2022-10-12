@@ -32,7 +32,7 @@ public class GatewayParameterService {
     public ResponseEntity<ResponseService> create(GatewayParameterRequest req) {
         if (gatewayParameterChannelRepo.findById(GatewayParameterChannelId.builder()
                         .transCode(req.getTransCode())
-                        .systemIdOrMcpId(req.getSystemIdOrmcpId())
+                        .systemIdOrMcpId(req.getSystemIdOrMcpId())
                 .build()).isPresent())
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.FOUND);
 
@@ -44,7 +44,7 @@ public class GatewayParameterService {
 
         GatewayParameterChannel gatewayParameterChannel = GatewayParameterChannel.builder()
                 .transCode(req.getTransCode())
-                .systemIdOrMcpId(req.getSystemIdOrmcpId())
+                .systemIdOrMcpId(req.getSystemIdOrMcpId())
                 .url(req.getUrl())
                 .isUsingProxy(req.getIsUsingProxy())
                 .proxyIp(req.getProxyIp())
@@ -59,7 +59,7 @@ public class GatewayParameterService {
 
     @Transactional
     public ResponseEntity<ResponseService> update(GatewayParameterRequest req) {
-        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(req.getTransCode(), req.getSystemIdOrmcpId());
+        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(req.getTransCode(), req.getSystemIdOrMcpId());
         if (channel == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
@@ -75,7 +75,7 @@ public class GatewayParameterService {
 
     @Transactional
     public ResponseEntity<ResponseService> delete(GatewayParameterRequest req) {
-        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(req.getTransCode(), req.getSystemIdOrmcpId());
+        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(req.getTransCode(), req.getSystemIdOrMcpId());
         if (channel == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
