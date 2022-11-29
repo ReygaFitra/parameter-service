@@ -35,7 +35,6 @@ public class CustomRequestBodyAdviceAdapter extends RequestBodyAdviceAdapter {
         try {
             str = new ObjectMapper().writeValueAsString(body);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error(e.getMessage());
         }
 
