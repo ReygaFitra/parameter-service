@@ -73,7 +73,7 @@ public class ChannelParameterService {
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         channelParameterRepo.delete(channel);
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getChannelId()), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getChannelId()+req.getSystemId()), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByChannelIdAndSystemId(String channelId, String systemId) {

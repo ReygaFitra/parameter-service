@@ -51,5 +51,6 @@ public class RestConstants {
         String MCP_PARAMETER = "mcp-parameter";
         String CHANNEL_PARAMETER = "channel-parameter";
         String KEY_PARAMETER = "key-parameter";
+        String ACCOUNT_MANAGEMENT = "account-management";
     }
 }

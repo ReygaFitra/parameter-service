@@ -1,10 +1,7 @@
 package id.co.bni.parameter.cache;
 
 import com.hazelcast.core.HazelcastInstance;
-import id.co.bni.parameter.dto.request.ChannelParameterRequest;
-import id.co.bni.parameter.dto.request.GatewayParameterRequest;
-import id.co.bni.parameter.dto.request.KeyParameterRequest;
-import id.co.bni.parameter.dto.request.McpParameterRequest;
+import id.co.bni.parameter.dto.request.*;
 import id.co.bni.parameter.dto.response.McpParameterDetailResponse;
 import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
 import id.co.bni.parameter.entity.McpParameterDetail;
@@ -34,6 +31,7 @@ public class ParameterLoader {
     private final ChannelParameterRepo channelParameterRepo;
     private final McpParameterDetailRepo mcpParameterDetailRepo;
     private final KeyParameterRepo keyParameterRepo;
+    private final AccountManageRepo accountManageRepo;
 
     @Async
     void load() {
@@ -41,6 +39,7 @@ public class ParameterLoader {
         loadMcpParameter();
         loadChannelParameter();
         loadKeyParameter();
+        loadAccountParameter();
     }
 
     private void loadGatewayParameter() {
@@ -127,6 +126,18 @@ public class ParameterLoader {
         clearPackHazelcast(RestConstants.CACHE_NAME.KEY_PARAMETER, hKeyParameter);
     }
 
+    private void loadAccountParameter() {
+        ConcurrentHashMap<String, AccountManagementRequest> hAccount = new ConcurrentHashMap<>();
+        try {
+            accountManageRepo.findAll()
+                    .forEach(account -> hAccount.put(account.getCompanyId(), account.toAccountManagementResponse()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
+        clearPackHazelcast(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT, hAccount);
+    }
+
     private void clearPackHazelcast(String cacheName, Map map) {
         hazelcastInstance.getMap(cacheName).evictAll();
         hazelcastInstance.getMap(cacheName).clear();
@@ -178,6 +189,16 @@ public class ParameterLoader {
 
     public KeyParameterRequest getKeyParam(String key) {
         Map<String, KeyParameterRequest> h = (Map<String, KeyParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.KEY_PARAMETER);
+        return h.get(key);
+    }
+
+    public Collection<AccountManagementRequest> getAllAccountParam() {
+        Map<String, AccountManagementRequest> h = (Map<String, AccountManagementRequest>) checkAndGet(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT);
+        return h.values();
+    }
+
+    public AccountManagementRequest getAccountParam(String key) {
+        Map<String, AccountManagementRequest> h = (Map<String, AccountManagementRequest>) checkAndGet(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT);
         return h.get(key);
     }
 
