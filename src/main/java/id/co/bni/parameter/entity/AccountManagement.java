@@ -16,7 +16,6 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Entity(name = "ACCOUNT_MANAGEMENT")
-@IdClass(ChannelParameterId.class)
 public class AccountManagement {
     @Id
     @Column(name = "COMPANY_ID", nullable = false, length = 50)
