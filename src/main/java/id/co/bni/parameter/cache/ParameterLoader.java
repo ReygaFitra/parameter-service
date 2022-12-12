@@ -4,6 +4,7 @@ import com.hazelcast.core.HazelcastInstance;
 import id.co.bni.parameter.dto.request.*;
 import id.co.bni.parameter.dto.response.McpParameterDetailResponse;
 import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
+import id.co.bni.parameter.entity.AccountManagementDetail;
 import id.co.bni.parameter.entity.McpParameterDetail;
 import id.co.bni.parameter.entity.McpParameterFee;
 import id.co.bni.parameter.repository.*;
@@ -32,6 +33,7 @@ public class ParameterLoader {
     private final McpParameterDetailRepo mcpParameterDetailRepo;
     private final KeyParameterRepo keyParameterRepo;
     private final AccountManageRepo accountManageRepo;
+    private final AccountManageDetailRepo accountManageDetailRepo;
 
     @Async
     void load() {
@@ -127,15 +129,30 @@ public class ParameterLoader {
     }
 
     private void loadAccountParameter() {
-        ConcurrentHashMap<String, AccountManagementRequest> hAccount = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, AccountManagementRequest> hAccountParameter = new ConcurrentHashMap<>();
         try {
             accountManageRepo.findAll()
-                    .forEach(account -> hAccount.put(account.getCompanyId(), account.toAccountManagementResponse()));
+                    .forEach(account ->
+                            {
+                                List<AccountDetailRequest> listDet = null;
+                                List<AccountManagementDetail> listAccountDet = accountManageDetailRepo.findByCompanyId(account.getCompanyId());
+                                if (listAccountDet != null && !listAccountDet.isEmpty()) {
+                                    listDet = new ArrayList<>();
+                                    for (AccountManagementDetail a : listAccountDet) {
+                                        listDet.add(AccountDetailRequest.builder()
+                                                        .dbAccount(a.getDbAccount())
+                                                        .dbAccountName(a.getDbAccountName())
+                                                .build());
+                                    }
+                                }
+                                hAccountParameter.put(account.getCompanyId(), account.toAccountManagementResponse(listDet));
+                            }
+                    );
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw e;
         }
-        clearPackHazelcast(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT, hAccount);
+        clearPackHazelcast(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT, hAccountParameter);
     }
 
     private void clearPackHazelcast(String cacheName, Map map) {

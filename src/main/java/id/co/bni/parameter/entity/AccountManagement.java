@@ -1,6 +1,8 @@
 package id.co.bni.parameter.entity;
 
+import id.co.bni.parameter.dto.request.AccountDetailRequest;
 import id.co.bni.parameter.dto.request.AccountManagementRequest;
+import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +12,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -24,9 +27,6 @@ public class AccountManagement {
     @Column(name = "COMPANY_NAME", nullable = false, length = 100)
     private String companyName;
 
-    @Column(name = "DB_ACCOUNT", nullable = false, length = 20)
-    private String dbAccount;
-
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
@@ -37,11 +37,11 @@ public class AccountManagement {
     @LastModifiedDate
     private Date updatedAt;
 
-    public AccountManagementRequest toAccountManagementResponse() {
+    public AccountManagementRequest toAccountManagementResponse(List<AccountDetailRequest> listAccount) {
         return AccountManagementRequest.builder()
                 .companyId(companyId)
                 .companyName(companyName)
-                .dbAccount(dbAccount)
+                .listAccount(listAccount)
                 .build();
     }
 }
