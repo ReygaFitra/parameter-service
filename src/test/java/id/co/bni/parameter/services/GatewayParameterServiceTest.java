@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -34,9 +33,6 @@ class GatewayParameterServiceTest {
 
     @Mock
     CacheService cacheService;
-
-    @Mock
-    CacheManager cacheManager;
 
     @BeforeEach
     void setUp() {
@@ -185,14 +181,7 @@ class GatewayParameterServiceTest {
         Mockito.when(cacheService.reloadByKey(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
                 .thenReturn(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, true, ""));
 
-        ResponseEntity<ResponseService> response = gatewayParameterService.delete(GatewayParameterRequest.builder()
-                .transCode("95477")
-                .systemIdOrMcpId("PIHC_PKC")
-                .isUsingProxy(false)
-                .proxyIp("-")
-                .proxyPort("-")
-                .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                .build());
+        ResponseEntity<ResponseService> response = gatewayParameterService.delete("95477", "PIHC_PKC");
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -205,14 +194,7 @@ class GatewayParameterServiceTest {
         Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
                 .thenReturn(null);
 
-        ResponseEntity<ResponseService> response = gatewayParameterService.delete(GatewayParameterRequest.builder()
-                .transCode("95477")
-                .systemIdOrMcpId("PIHC_PKC")
-                .isUsingProxy(false)
-                .proxyIp("-")
-                .proxyPort("-")
-                .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                .build());
+        ResponseEntity<ResponseService> response = gatewayParameterService.delete("95477", "PIHC_PKC");
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
