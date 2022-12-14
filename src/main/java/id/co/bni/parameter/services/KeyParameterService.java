@@ -58,13 +58,13 @@ public class KeyParameterService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseService> delete(KeyParameterRequest req) {
-        KeyParameter keyParameter = keyParameterRepo.findByKey(req.getKey());
+    public ResponseEntity<ResponseService> delete(String key) {
+        KeyParameter keyParameter = keyParameterRepo.findByKey(key);
         if (keyParameter == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         keyParameterRepo.delete(keyParameter);
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getKey()), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, key), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByKey(String key) {

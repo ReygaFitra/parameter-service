@@ -36,8 +36,8 @@ public class AccountManageService {
         if (accountManageRepo.findById(req.getCompanyId()).isPresent())
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.FOUND);
 
-        if (req.getListAccount().size() < 1) {
-            return new ResponseEntity<>(ResponseUtil.setResponseError("12", "Minimum data list account is 1", null, ""), HttpStatus.BAD_REQUEST);
+        if (req.getListAccount().isEmpty()) {
+            return new ResponseEntity<>(ResponseUtil.setResponseError("12", "List account cannot be empty", null, ""), HttpStatus.BAD_REQUEST);
         }
 
         AccountManagement accountManagement = AccountManagement.builder()
@@ -64,8 +64,8 @@ public class AccountManageService {
         if (management == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
-        if (req.getListAccount().size() < 1) {
-            return new ResponseEntity<>(ResponseUtil.setResponseError("12", "Minimum data list account is 1", null, ""), HttpStatus.BAD_REQUEST);
+        if (req.getListAccount().isEmpty()) {
+            return new ResponseEntity<>(ResponseUtil.setResponseError("12", "List account cannot be empty", null, ""), HttpStatus.BAD_REQUEST);
         }
 
         management.setCompanyName(req.getCompanyName());
@@ -86,17 +86,17 @@ public class AccountManageService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseService> delete(AccountManagementRequest req) {
-        AccountManagement management = accountManageRepo.findByCompanyId(req.getCompanyId());
+    public ResponseEntity<ResponseService> delete(String companyId) {
+        AccountManagement management = accountManageRepo.findByCompanyId(companyId);
         if (management == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         accountManageRepo.delete(management);
 
-        List<AccountManagementDetail> listDet = accountManageDetailRepo.findByCompanyId(req.getCompanyId());
+        List<AccountManagementDetail> listDet = accountManageDetailRepo.findByCompanyId(companyId);
         if (listDet != null && !listDet.isEmpty()) accountManageDetailRepo.deleteAll(listDet);
 
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT, req.getCompanyId()), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT, companyId), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByCompanyId(String companyId) {

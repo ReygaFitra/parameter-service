@@ -46,12 +46,8 @@ public class GatewayParameterController {
 
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> delete(@RequestBody @Valid GatewayParameterRequest req, BindingResult result) {
-        ResponseService response = new ResponseService();
-        if (!RestValidationHelper.fieldValidation(result, response)) {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-        return gatewayParameterService.delete(req);
+    public ResponseEntity<ResponseService> delete(@RequestParam("transCode") @NotBlank @NotNull String transCode, @RequestParam("systemIdOrmcpId") @NotBlank @NotNull String systemIdOrmcpId) {
+        return gatewayParameterService.delete(transCode, systemIdOrmcpId);
     }
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)

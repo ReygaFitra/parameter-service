@@ -45,12 +45,8 @@ public class KeyParameterController {
 
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> delete(@RequestBody @Valid KeyParameterRequest req, BindingResult result) {
-        ResponseService response = new ResponseService();
-        if (!RestValidationHelper.fieldValidation(result, response)) {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-        return keyParameterService.delete(req);
+    public ResponseEntity<ResponseService> delete(@RequestParam("key") @NotBlank @NotNull String key) {
+        return keyParameterService.delete(key);
     }
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)

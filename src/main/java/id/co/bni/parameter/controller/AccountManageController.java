@@ -46,12 +46,8 @@ public class AccountManageController {
 
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> delete(@RequestBody @Valid AccountManagementRequest req, BindingResult result) {
-        ResponseService response = new ResponseService();
-        if (!RestValidationHelper.fieldValidation(result, response)) {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-        return accountManageService.delete(req);
+    public ResponseEntity<ResponseService> delete(@RequestParam("companyId") @NotBlank @NotNull String companyId) {
+        return accountManageService.delete(companyId);
     }
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
