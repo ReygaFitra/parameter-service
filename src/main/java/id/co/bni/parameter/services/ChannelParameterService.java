@@ -67,13 +67,13 @@ public class ChannelParameterService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseService> delete(ChannelParameterRequest req) {
-        ChannelParameter channel = channelParameterRepo.findByChannelIdAndSystemId(req.getChannelId(), req.getSystemId());
+    public ResponseEntity<ResponseService> delete(String channelId, String systemId) {
+        ChannelParameter channel = channelParameterRepo.findByChannelIdAndSystemId(channelId, systemId);
         if (channel == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         channelParameterRepo.delete(channel);
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getChannelId()), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, channelId+systemId), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByChannelIdAndSystemId(String channelId, String systemId) {

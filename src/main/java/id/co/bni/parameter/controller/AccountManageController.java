@@ -1,8 +1,8 @@
 package id.co.bni.parameter.controller;
 
 import id.co.bni.parameter.dto.ResponseService;
-import id.co.bni.parameter.dto.request.KeyParameterRequest;
-import id.co.bni.parameter.services.KeyParameterService;
+import id.co.bni.parameter.dto.request.AccountManagementRequest;
+import id.co.bni.parameter.services.AccountManageService;
 import id.co.bni.parameter.util.RestValidationHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,45 +19,46 @@ import javax.validation.constraints.NotNull;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/parameter/key")
-public class KeyParameterController {
-    private final KeyParameterService keyParameterService;
+@RequestMapping(value = "/api/parameter/account")
+public class AccountManageController {
+
+    private final AccountManageService accountManageService;
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> create(@RequestBody @Valid KeyParameterRequest req, BindingResult result) {
+    public ResponseEntity<ResponseService> create(@RequestBody @Valid AccountManagementRequest req, BindingResult result) {
         ResponseService response = new ResponseService();
         if (!RestValidationHelper.fieldValidation(result, response)) {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        return keyParameterService.create(req);
+        return accountManageService.create(req);
     }
 
     @PostMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> update(@RequestBody @Valid KeyParameterRequest req, BindingResult result) {
+    public ResponseEntity<ResponseService> update(@RequestBody @Valid AccountManagementRequest req, BindingResult result) {
         ResponseService response = new ResponseService();
         if (!RestValidationHelper.fieldValidation(result, response)) {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        return keyParameterService.update(req);
+        return accountManageService.update(req);
     }
 
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> delete(@RequestParam("key") @NotBlank @NotNull String key) {
-        return keyParameterService.delete(key);
+    public ResponseEntity<ResponseService> delete(@RequestParam("companyId") @NotBlank @NotNull String companyId) {
+        return accountManageService.delete(companyId);
     }
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> findByChannelIdAndSystemId(@RequestParam("key") @NotBlank @NotNull String key) {
-        return keyParameterService.findByKey(key);
+    public ResponseEntity<ResponseService> findByCompanyId(@RequestParam("companyId") @NotBlank @NotNull String companyId) {
+        return accountManageService.findByCompanyId(companyId);
     }
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<ResponseService> findAll() {
-        return keyParameterService.findAll();
+        return accountManageService.findAll();
     }
 }

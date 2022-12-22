@@ -113,20 +113,20 @@ public class McpParameterService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseService> delete(McpParameterRequest req) {
-        McpParameter mcpParameter = mcpParameterRepo.findByMcpId(req.getMcpId());
+    public ResponseEntity<ResponseService> delete(String mcpId) {
+        McpParameter mcpParameter = mcpParameterRepo.findByMcpId(mcpId);
         if (mcpParameter == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         mcpParameterRepo.delete(mcpParameter);
 
-        List<McpParameterFee> listFee = mcpParameterFeeRepo.findByMcpId(req.getMcpId());
+        List<McpParameterFee> listFee = mcpParameterFeeRepo.findByMcpId(mcpId);
         if (listFee != null && !listFee.isEmpty()) mcpParameterFeeRepo.deleteAll(listFee);
 
-        List<McpParameterDetail> listDet = mcpParameterDetailRepo.findByMcpId(req.getMcpId());
+        List<McpParameterDetail> listDet = mcpParameterDetailRepo.findByMcpId(mcpId);
         if (listDet != null && !listDet.isEmpty()) mcpParameterDetailRepo.deleteAll(listDet);
 
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.MCP_PARAMETER, req.getMcpId()), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.MCP_PARAMETER, mcpId), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByMcpId(String mcpId) {

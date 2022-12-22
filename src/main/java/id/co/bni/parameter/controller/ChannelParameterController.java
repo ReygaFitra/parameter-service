@@ -46,12 +46,8 @@ public class ChannelParameterController {
 
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> delete(@RequestBody @Valid ChannelParameterRequest req, BindingResult result) {
-        ResponseService response = new ResponseService();
-        if (!RestValidationHelper.fieldValidation(result, response)) {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-        return channelParameterService.delete(req);
+    public ResponseEntity<ResponseService> delete(@RequestParam("channelId") @NotBlank @NotNull String channelId, @RequestParam("systemId") @NotBlank @NotNull String systemId) {
+        return channelParameterService.delete(channelId, systemId);
     }
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)

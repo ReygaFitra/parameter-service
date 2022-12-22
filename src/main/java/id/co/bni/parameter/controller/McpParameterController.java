@@ -46,12 +46,8 @@ public class McpParameterController {
 
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> delete(@RequestBody @Valid McpParameterRequest req, BindingResult result) {
-        ResponseService response = new ResponseService();
-        if (!RestValidationHelper.fieldValidation(result, response)) {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-        return mcpParameterService.delete(req);
+    public ResponseEntity<ResponseService> delete(@RequestParam("mcpId") @NotBlank @NotNull String mcpId) {
+        return mcpParameterService.delete(mcpId);
     }
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)

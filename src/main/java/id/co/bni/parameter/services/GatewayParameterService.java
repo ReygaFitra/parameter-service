@@ -74,13 +74,13 @@ public class GatewayParameterService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseService> delete(GatewayParameterRequest req) {
-        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(req.getTransCode(), req.getSystemIdOrMcpId());
+    public ResponseEntity<ResponseService> delete(String transCode, String systemIdOrmcpId) {
+        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(transCode, systemIdOrmcpId);
         if (channel == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         gatewayParameterChannelRepo.delete(channel);
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, req.getTransCode()), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, transCode+systemIdOrmcpId), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByTransCodeAndSystemIdOrmcpId(String transCode, String systemIdOrmcpId) {

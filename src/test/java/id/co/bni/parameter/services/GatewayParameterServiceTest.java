@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -35,9 +34,6 @@ class GatewayParameterServiceTest {
     @Mock
     CacheService cacheService;
 
-    @Mock
-    CacheManager cacheManager;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -46,16 +42,7 @@ class GatewayParameterServiceTest {
     @Test
     void create() {
         Mockito.when(gatewayParameterChannelRepo.findById(ArgumentMatchers.any(GatewayParameterChannelId.class))).thenReturn(Optional.empty());
-        GatewayParameterChannel gatewayParameterChannel = GatewayParameterChannel.builder()
-                .transCode("95477")
-                .systemIdOrMcpId("PIHC_PKC")
-                .proxyIp("-")
-                .proxyPort("-")
-                .isUsingProxy(false)
-                .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                .createdAt(new Date())
-                .updatedAt(new Date())
-                .build();
+        GatewayParameterChannel gatewayParameterChannel = GatewayParameterChannel.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC").proxyIp("-").proxyPort("-").isUsingProxy(false).url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").createdAt(new Date()).updatedAt(new Date()).build();
         Mockito.when(gatewayParameterChannelRepo.save(ArgumentMatchers.any(GatewayParameterChannel.class))).thenReturn(gatewayParameterChannel);
 
         GatewayParameterRequest request = GatewayParameterRequest.builder().build();
@@ -79,16 +66,7 @@ class GatewayParameterServiceTest {
 
     @Test
     void createDuplicate() {
-        GatewayParameterChannel gatewayParameterChannel = GatewayParameterChannel.builder()
-                .transCode("95477")
-                .systemIdOrMcpId("PIHC_PKC")
-                .proxyIp("-")
-                .proxyPort("-")
-                .isUsingProxy(false)
-                .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                .createdAt(new Date())
-                .updatedAt(new Date())
-                .build();
+        GatewayParameterChannel gatewayParameterChannel = GatewayParameterChannel.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC").proxyIp("-").proxyPort("-").isUsingProxy(false).url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").createdAt(new Date()).updatedAt(new Date()).build();
         Mockito.when(gatewayParameterChannelRepo.findById(ArgumentMatchers.any(GatewayParameterChannelId.class))).thenReturn(Optional.of(gatewayParameterChannel));
 
         GatewayParameterRequest request = GatewayParameterRequest.builder().build();
@@ -108,28 +86,8 @@ class GatewayParameterServiceTest {
 
     @Test
     void update() {
-        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
-                .thenReturn(GatewayParameterChannel.builder()
-                        .transCode("95477")
-                        .systemIdOrMcpId("PIHC_PKC")
-                        .proxyIp("-")
-                        .proxyPort("-")
-                        .isUsingProxy(false)
-                        .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                        .createdAt(new Date())
-                        .updatedAt(new Date())
-                        .build());
-        Mockito.when(gatewayParameterChannelRepo.saveAndFlush(ArgumentMatchers.any(GatewayParameterChannel.class)))
-                .thenReturn(GatewayParameterChannel.builder()
-                        .transCode("95477")
-                        .systemIdOrMcpId("PIHC_PKC_UPDATE")
-                        .proxyIp("-")
-                        .proxyPort("-")
-                        .isUsingProxy(false)
-                        .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                        .createdAt(new Date())
-                        .updatedAt(new Date())
-                        .build());
+        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(GatewayParameterChannel.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC").proxyIp("-").proxyPort("-").isUsingProxy(false).url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").createdAt(new Date()).updatedAt(new Date()).build());
+        Mockito.when(gatewayParameterChannelRepo.saveAndFlush(ArgumentMatchers.any(GatewayParameterChannel.class))).thenReturn(GatewayParameterChannel.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC_UPDATE").proxyIp("-").proxyPort("-").isUsingProxy(false).url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").createdAt(new Date()).updatedAt(new Date()).build());
 
         GatewayParameterRequest request = GatewayParameterRequest.builder().build();
         request.setTransCode("95477");
@@ -150,17 +108,9 @@ class GatewayParameterServiceTest {
 
     @Test
     void updateNotFound() {
-        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
-                .thenReturn(null);
+        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(null);
 
-        ResponseEntity<ResponseService> response = gatewayParameterService.update(GatewayParameterRequest.builder()
-                .transCode("95477")
-                .systemIdOrMcpId("PIHC_PKC_UPDATE")
-                .isUsingProxy(false)
-                .proxyIp("-")
-                .proxyPort("-")
-                .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                .build());
+        ResponseEntity<ResponseService> response = gatewayParameterService.update(GatewayParameterRequest.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC_UPDATE").isUsingProxy(false).proxyIp("-").proxyPort("-").url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").build());
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -170,29 +120,11 @@ class GatewayParameterServiceTest {
 
     @Test
     void delete() {
-        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
-                .thenReturn(GatewayParameterChannel.builder()
-                        .transCode("95477")
-                        .systemIdOrMcpId("PIHC_PKC")
-                        .proxyIp("-")
-                        .proxyPort("-")
-                        .isUsingProxy(false)
-                        .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                        .createdAt(new Date())
-                        .updatedAt(new Date())
-                        .build());
+        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(GatewayParameterChannel.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC").proxyIp("-").proxyPort("-").isUsingProxy(false).url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").createdAt(new Date()).updatedAt(new Date()).build());
 
-        Mockito.when(cacheService.reloadByKey(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
-                .thenReturn(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, true, ""));
+        Mockito.when(cacheService.reloadByKey(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, true, ""));
 
-        ResponseEntity<ResponseService> response = gatewayParameterService.delete(GatewayParameterRequest.builder()
-                .transCode("95477")
-                .systemIdOrMcpId("PIHC_PKC")
-                .isUsingProxy(false)
-                .proxyIp("-")
-                .proxyPort("-")
-                .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                .build());
+        ResponseEntity<ResponseService> response = gatewayParameterService.delete("95477", "PIHC_PKC");
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -202,17 +134,9 @@ class GatewayParameterServiceTest {
 
     @Test
     void deleteNotFound() {
-        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
-                .thenReturn(null);
+        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(null);
 
-        ResponseEntity<ResponseService> response = gatewayParameterService.delete(GatewayParameterRequest.builder()
-                .transCode("95477")
-                .systemIdOrMcpId("PIHC_PKC")
-                .isUsingProxy(false)
-                .proxyIp("-")
-                .proxyPort("-")
-                .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                .build());
+        ResponseEntity<ResponseService> response = gatewayParameterService.delete("95477", "PIHC_PKC");
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -226,8 +150,7 @@ class GatewayParameterServiceTest {
         gatewayParameterRequest.setTransCode("95477");
         gatewayParameterRequest.setSystemIdOrMcpId("PIHC_PKC");
         gatewayParameterRequest.setUrl("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry");
-        Mockito.when(parameterLoader.getGatewayParam(ArgumentMatchers.anyString()))
-                .thenReturn(gatewayParameterRequest);
+        Mockito.when(parameterLoader.getGatewayParam(ArgumentMatchers.anyString())).thenReturn(gatewayParameterRequest);
 
         ResponseEntity<ResponseService> response = gatewayParameterService.findByTransCodeAndSystemIdOrmcpId("95477", "PIHC_PKC");
         Assertions.assertNotNull(response);
@@ -242,8 +165,7 @@ class GatewayParameterServiceTest {
 
     @Test
     void findByTransCodeAndSystemIdOrmcpIdNotFound() {
-        Mockito.when(parameterLoader.getGatewayParam(ArgumentMatchers.anyString()))
-                .thenReturn(null);
+        Mockito.when(parameterLoader.getGatewayParam(ArgumentMatchers.anyString())).thenReturn(null);
 
         ResponseEntity<ResponseService> response = gatewayParameterService.findByTransCodeAndSystemIdOrmcpId("95477", "PIHC_PKC");
         Assertions.assertNotNull(response);
@@ -256,22 +178,8 @@ class GatewayParameterServiceTest {
     @Test
     void findAll() {
         Collection<GatewayParameterRequest> collection = new ArrayList<>();
-        collection.add(GatewayParameterRequest.builder()
-                .transCode("95477")
-                .systemIdOrMcpId("PIHC_PKC_UPDATE")
-                .isUsingProxy(false)
-                .proxyIp("-")
-                .proxyPort("-")
-                .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                .build());
-        collection.add(GatewayParameterRequest.builder()
-                .transCode("9547723")
-                .systemIdOrMcpId("PIHC_PKG")
-                .isUsingProxy(false)
-                .proxyIp("-")
-                .proxyPort("-")
-                .url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry")
-                .build());
+        collection.add(GatewayParameterRequest.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC_UPDATE").isUsingProxy(false).proxyIp("-").proxyPort("-").url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").build());
+        collection.add(GatewayParameterRequest.builder().transCode("9547723").systemIdOrMcpId("PIHC_PKG").isUsingProxy(false).proxyIp("-").proxyPort("-").url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").build());
         Mockito.when(parameterLoader.getAllGatewayParam()).thenReturn(collection);
 
         ResponseEntity<ResponseService> response = gatewayParameterService.findAll();
