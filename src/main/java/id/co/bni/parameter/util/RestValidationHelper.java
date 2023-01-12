@@ -14,8 +14,9 @@ public class RestValidationHelper {
     }
     public static boolean fieldValidation(BindingResult result, ResponseService response){
         if (result != null && result.hasErrors()) {
-            response.setStatusCode(HttpStatus.BAD_REQUEST);
-            response.setStatus(Objects.requireNonNull(result.getFieldError()).getField() + " - " + Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+            response.setStatusCode(RestConstants.RESPONSE.WRONG_FORMAT_DATA.getCode());
+            response.setStatus(RestConstants.RESPONSE.WRONG_FORMAT_DATA.getDescription());
+            response.setMessage(Objects.requireNonNull(result.getFieldError()).getField() + " - " + Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
             log.error(Objects.requireNonNull(result.getFieldError()).getField() + " - " + Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
             return false;
         }
