@@ -34,7 +34,7 @@ public class AccountManageService {
     @Transactional
     public ResponseEntity<ResponseService> create(AccountManagementRequest req) {
         if (accountManageRepo.findById(req.getCompanyId()).isPresent())
-            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.FOUND);
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.BAD_REQUEST);
 
         if (req.getListAccount().isEmpty()) {
             return new ResponseEntity<>(ResponseUtil.setResponseError("12", "List account cannot be empty", null, ""), HttpStatus.BAD_REQUEST);

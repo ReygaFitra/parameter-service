@@ -39,7 +39,7 @@ public class McpParameterService {
     @Transactional
     public ResponseEntity<ResponseService> create(McpParameterRequest req) {
         if (mcpParameterRepo.findById(req.getMcpId()).isPresent())
-            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.FOUND);
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.BAD_REQUEST);
 
         if (!req.getIsMatch() && req.getDetail().size() > 1) {
             return new ResponseEntity<>(ResponseUtil.setResponseError("12", "Detail data cannot be more than 1 ", null, ""), HttpStatus.BAD_REQUEST);

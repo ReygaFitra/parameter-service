@@ -29,7 +29,7 @@ public class KeyParameterService {
     @Transactional
     public ResponseEntity<ResponseService> create(KeyParameterRequest req) {
         if (keyParameterRepo.findById(req.getKey()).isPresent())
-            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.FOUND);
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.BAD_REQUEST);
 
         KeyParameter keyParameter = KeyParameter.builder()
                 .key(req.getKey())

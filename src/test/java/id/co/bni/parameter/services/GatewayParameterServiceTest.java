@@ -79,7 +79,7 @@ class GatewayParameterServiceTest {
         ResponseEntity<ResponseService> response = gatewayParameterService.create(request);
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
-        Assertions.assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         Assertions.assertEquals(RestConstants.RESPONSE.DATA_ALREADY_EXIST.getCode(), response.getBody().getStatusCode());
         Assertions.assertNull(response.getBody().getData());
     }

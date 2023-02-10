@@ -33,7 +33,7 @@ public class ChannelParameterService {
                         .channelId(req.getChannelId())
                         .systemId(req.getSystemId())
                 .build()).isPresent())
-            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.FOUND);
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.BAD_REQUEST);
 
         ChannelParameter channelParameter = ChannelParameter.builder()
                 .channelId(req.getChannelId())

@@ -34,7 +34,7 @@ public class GatewayParameterService {
                         .transCode(req.getTransCode())
                         .systemIdOrMcpId(req.getSystemIdOrMcpId())
                 .build()).isPresent())
-            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.FOUND);
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.BAD_REQUEST);
 
         if (req.getIsUsingProxy() && (req.getProxyIp() == null || "".equals(req.getProxyIp())))
             return new ResponseEntity<>(ResponseUtil.setResponseSuccessCustom(RestConstants.RESPONSE.WRONG_FORMAT_DATA, null, "proxyIp - must not be blank or null", ""), HttpStatus.BAD_REQUEST);
