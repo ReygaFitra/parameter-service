@@ -69,13 +69,15 @@ public class KeyParameterService {
 
     public ResponseEntity<ResponseService> findByKey(String key) {
         KeyParameterRequest keyParam = parameterLoader.getKeyParam(key);
-        if (keyParam == null) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
+        if (keyParam == null)
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "key : " + key + " Not Found"), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, keyParam, ""), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findAll() {
         Collection<KeyParameterRequest> collection = parameterLoader.getAllKeyParam();
-        if (collection.isEmpty()) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
+        if (collection.isEmpty())
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, collection, ""), HttpStatus.OK);
     }
 

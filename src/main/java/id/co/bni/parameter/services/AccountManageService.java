@@ -102,7 +102,7 @@ public class AccountManageService {
     public ResponseEntity<ResponseService> findByCompanyId(String companyId) {
         AccountManagementRequest accountManagementRequest = parameterLoader.getAccountParam(companyId);
         if (accountManagementRequest == null)
-            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "companyId :" + companyId + " Not Found"), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, accountManagementRequest, ""), HttpStatus.OK);
     }
 

@@ -30,8 +30,8 @@ public class ChannelParameterService {
     @Transactional
     public ResponseEntity<ResponseService> create(ChannelParameterRequest req) {
         if (channelParameterRepo.findById(ChannelParameterId.builder()
-                        .channelId(req.getChannelId())
-                        .systemId(req.getSystemId())
+                .channelId(req.getChannelId())
+                .systemId(req.getSystemId())
                 .build()).isPresent())
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_ALREADY_EXIST, null, ""), HttpStatus.BAD_REQUEST);
 
@@ -73,24 +73,26 @@ public class ChannelParameterService {
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         channelParameterRepo.delete(channel);
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, channelId+systemId), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, channelId + systemId), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByChannelIdAndSystemId(String channelId, String systemId) {
-        ChannelParameterRequest channelParameterRequest = parameterLoader.getChannelParam(channelId+systemId);
-        if (channelParameterRequest == null) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
+        ChannelParameterRequest channelParameterRequest = parameterLoader.getChannelParam(channelId + systemId);
+        if (channelParameterRequest == null)
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, "channelId and systemId : " + channelId + "-" + systemId + " Not Found"), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, channelParameterRequest, ""), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findAll() {
         Collection<ChannelParameterRequest> collection = parameterLoader.getAllChannelParam();
-        if (collection.isEmpty()) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
+        if (collection.isEmpty())
+            return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, collection, ""), HttpStatus.OK);
     }
 
     private void loadCache(ChannelParameter channelParameter) {
         ConcurrentHashMap<String, ChannelParameterRequest> hChannelParameter = new ConcurrentHashMap<>();
-        hChannelParameter.put(channelParameter.getChannelId()+channelParameter.getSystemId(), channelParameter.toChannelParameterResponse());
-        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.CHANNEL_PARAMETER, channelParameter.getChannelId()+channelParameter.getSystemId(), hChannelParameter);
+        hChannelParameter.put(channelParameter.getChannelId() + channelParameter.getSystemId(), channelParameter.toChannelParameterResponse());
+        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.CHANNEL_PARAMETER, channelParameter.getChannelId() + channelParameter.getSystemId(), hChannelParameter);
     }
 }
