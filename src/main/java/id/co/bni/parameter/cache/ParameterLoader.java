@@ -1,6 +1,5 @@
 package id.co.bni.parameter.cache;
 
-import com.hazelcast.core.HazelcastInstance;
 import id.co.bni.parameter.dto.request.*;
 import id.co.bni.parameter.dto.response.McpParameterDetailResponse;
 import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
@@ -12,6 +11,7 @@ import id.co.bni.parameter.util.RestConstants;
 import id.co.bni.parameter.util.RestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 @Component
 public class ParameterLoader {
-    private final HazelcastInstance hazelcastInstance;
     private final GatewayParameterChannelRepo parameterChannelRepository;
     private final McpParameterRepo mcpParameterRepo;
     private final McpParameterFeeRepo mcpParameterFeeRepo;
@@ -34,6 +33,7 @@ public class ParameterLoader {
     private final KeyParameterRepo keyParameterRepo;
     private final AccountManageRepo accountManageRepo;
     private final AccountManageDetailRepo accountManageDetailRepo;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Async
     void load() {
@@ -47,10 +47,10 @@ public class ParameterLoader {
     private void loadGatewayParameter() {
         ConcurrentHashMap<String, GatewayParameterRequest> hGatewayParameter = new ConcurrentHashMap<>();
         try {
-            // id = transCode + systemIdOrMcpId
+            // id = transCode + systemIdOrMcpId + paymentType
             parameterChannelRepository.findAll()
                     .forEach(gatewayParam -> {
-                        String id = gatewayParam.getTransCode()+gatewayParam.getSystemIdOrMcpId();
+                        String id = gatewayParam.getTransCode()+gatewayParam.getSystemIdOrMcpId()+(gatewayParam.getPaymentType() != null ? gatewayParam.getPaymentType() : "-");
                         hGatewayParameter.put(id, gatewayParam.toGatewayParameterResponse());
                     });
         } catch (Exception e) {
@@ -155,17 +155,22 @@ public class ParameterLoader {
         clearPackHazelcast(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT, hAccountParameter);
     }
 
-    private void clearPackHazelcast(String cacheName, Map map) {
-        hazelcastInstance.getMap(cacheName).evictAll();
-        hazelcastInstance.getMap(cacheName).clear();
-        hazelcastInstance.getMap(cacheName).putAll(map);
+    private void clearPackHazelcast(String cacheName, Map<String, ?> map) {
+        redisTemplate.delete(cacheName);
+        redisTemplate.opsForHash().putAll(cacheName, map);
+//        hazelcastInstance.getMap(cacheName).evictAll();
+//        hazelcastInstance.getMap(cacheName).clear();
+//        hazelcastInstance.getMap(cacheName).putAll(map);
     }
 
     @Async
-    public void clearAndPut(String cacheName, String key, Map map) {
-        if (hazelcastInstance.getMap(cacheName).get(key) != null)
-            hazelcastInstance.getMap(cacheName).evict(key);
-        hazelcastInstance.getMap(cacheName).putAll(map);
+    public void clearAndPut(String cacheName, String key, Map<String, ?> map) {
+        if (redisTemplate.opsForHash().get(cacheName, key) != null)
+            redisTemplate.opsForHash().delete(cacheName, key);
+        redisTemplate.opsForHash().putAll(cacheName, map);
+//        if (hazelcastInstance.getMap(cacheName).get(key) != null)
+//            hazelcastInstance.getMap(cacheName).evict(key);
+//        hazelcastInstance.getMap(cacheName).putAll(map);
     }
 
     public Collection<GatewayParameterRequest> getAllGatewayParam() {
@@ -220,11 +225,36 @@ public class ParameterLoader {
     }
 
     private Map<?, ?> checkAndGet(String cacheName) {
-        Map<?, ?> map = hazelcastInstance.getMap(cacheName);
+        Map<Object, Object> map = redisTemplate.opsForHash().entries(cacheName);
+//        Map<String, ?> map = hazelcastInstance.getMap(cacheName);
         if (map.isEmpty()) {
             load();
-            map = hazelcastInstance.getMap(cacheName);
+//            map = hazelcastInstance.getMap(cacheName);
+            map = redisTemplate.opsForHash().entries(cacheName);
         }
         return map;
+    }
+
+    public void deleteHash(String name, String key) {
+        log.info("Reload with name: {} and key: {}", name, key);
+        switch (name) {
+            case RestConstants.CACHE_NAME.GATEWAY_PARAMETER:
+                loadGatewayParameter();
+                break;
+            case RestConstants.CACHE_NAME.MCP_PARAMETER:
+                loadMcpParameter();
+                break;
+            case RestConstants.CACHE_NAME.CHANNEL_PARAMETER:
+                loadChannelParameter();
+                break;
+            case RestConstants.CACHE_NAME.KEY_PARAMETER:
+                loadKeyParameter();
+                break;
+            case RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT:
+                loadAccountParameter();
+                break;
+            default:
+                load();
+        }
     }
 }
