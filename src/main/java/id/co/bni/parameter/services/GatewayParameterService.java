@@ -45,6 +45,7 @@ public class GatewayParameterService {
         GatewayParameterChannel gatewayParameterChannel = GatewayParameterChannel.builder()
                 .transCode(req.getTransCode())
                 .systemIdOrMcpId(req.getSystemIdOrMcpId())
+                .paymentType(req.getPaymentType())
                 .url(req.getUrl())
                 .isUsingProxy(req.getIsUsingProxy())
                 .proxyIp(req.getProxyIp())
@@ -59,7 +60,7 @@ public class GatewayParameterService {
 
     @Transactional
     public ResponseEntity<ResponseService> update(GatewayParameterRequest req) {
-        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(req.getTransCode(), req.getSystemIdOrMcpId());
+        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpIdAndPaymentType(req.getTransCode(), req.getSystemIdOrMcpId(), req.getPaymentType());
         if (channel == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
@@ -74,8 +75,8 @@ public class GatewayParameterService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseService> delete(String transCode, String systemIdOrmcpId) {
-        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(transCode, systemIdOrmcpId);
+    public ResponseEntity<ResponseService> delete(String transCode, String systemIdOrmcpId, String paymentType) {
+        GatewayParameterChannel channel = gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpIdAndPaymentType(transCode, systemIdOrmcpId, paymentType);
         if (channel == null)
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
@@ -83,8 +84,8 @@ public class GatewayParameterService {
         return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, transCode+systemIdOrmcpId), HttpStatus.OK);
     }
 
-    public ResponseEntity<ResponseService> findByTransCodeAndSystemIdOrmcpId(String transCode, String systemIdOrmcpId) {
-        GatewayParameterRequest gatewayParameterChannel = parameterLoader.getGatewayParam(transCode+systemIdOrmcpId);
+    public ResponseEntity<ResponseService> findByTransCodeAndSystemIdOrmcpIdAndPaymentType(String transCode, String systemIdOrmcpId, String paymentType) {
+        GatewayParameterRequest gatewayParameterChannel = parameterLoader.getGatewayParam(transCode+systemIdOrmcpId+paymentType);
         if (gatewayParameterChannel == null) return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, gatewayParameterChannel, ""), HttpStatus.OK);
     }
@@ -97,7 +98,7 @@ public class GatewayParameterService {
 
     private void loadCache(GatewayParameterChannel gatewayParameterChannel) {
         ConcurrentHashMap<String, GatewayParameterRequest> hGatewayParameter = new ConcurrentHashMap<>();
-        hGatewayParameter.put(gatewayParameterChannel.getTransCode()+gatewayParameterChannel.getSystemIdOrMcpId(), gatewayParameterChannel.toGatewayParameterResponse());
-        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, gatewayParameterChannel.getTransCode()+gatewayParameterChannel.getSystemIdOrMcpId(), hGatewayParameter);
+        hGatewayParameter.put(gatewayParameterChannel.getTransCode()+gatewayParameterChannel.getSystemIdOrMcpId()+gatewayParameterChannel.getPaymentType(), gatewayParameterChannel.toGatewayParameterResponse());
+        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, gatewayParameterChannel.getTransCode()+gatewayParameterChannel.getSystemIdOrMcpId()+gatewayParameterChannel.getPaymentType(), hGatewayParameter);
     }
 }

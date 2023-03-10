@@ -46,14 +46,14 @@ public class GatewayParameterController {
 
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> delete(@RequestParam("transCode") @NotBlank @NotNull String transCode, @RequestParam("systemIdOrmcpId") @NotBlank @NotNull String systemIdOrmcpId) {
-        return gatewayParameterService.delete(transCode, systemIdOrmcpId);
+    public ResponseEntity<ResponseService> delete(@RequestParam("transCode") @NotBlank @NotNull String transCode, @RequestParam("systemIdOrmcpId") @NotBlank @NotNull String systemIdOrmcpId, @RequestParam("paymentType") @NotNull String paymentType) {
+        return gatewayParameterService.delete(transCode, systemIdOrmcpId, paymentType);
     }
 
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ResponseService> findByTransCode(@RequestParam("transCode") @NotBlank @NotNull String transCode, @RequestParam("systemIdOrmcpId") @NotBlank @NotNull String systemIdOrmcpId) {
-        return gatewayParameterService.findByTransCodeAndSystemIdOrmcpId(transCode, systemIdOrmcpId);
+    public ResponseEntity<ResponseService> findByTransCode(@RequestParam("transCode") @NotBlank @NotNull String transCode, @RequestParam("systemIdOrmcpId") @NotBlank @NotNull String systemIdOrmcpId, @RequestParam("paymentType") @NotNull String paymentType) {
+        return gatewayParameterService.findByTransCodeAndSystemIdOrmcpIdAndPaymentType(transCode, systemIdOrmcpId, paymentType);
     }
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)

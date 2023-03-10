@@ -9,7 +9,7 @@ public class RestConstants {
         HTTP_INTERNAL_ERROR("X5", "Service Internal Error"),
         INVALID_TRANSACTION("12", "Invalid Transaction"),
         INVALID_AMOUNT("13", "Invalid Amount"),
-        DATA_NOT_FOUND("404", "Data not found"),
+        DATA_NOT_FOUND("14", "Data not found"),
         DATA_BLOCKED("15", "Data blocked or inactive"),
         DATA_ALREADY_EXIST("16", "Data already axis"),
         WRONG_FORMAT_DATA("30", "Incorrect data format"),
