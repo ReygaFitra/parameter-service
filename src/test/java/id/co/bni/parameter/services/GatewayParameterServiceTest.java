@@ -86,12 +86,13 @@ class GatewayParameterServiceTest {
 
     @Test
     void update() {
-        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(GatewayParameterChannel.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC").proxyIp("-").proxyPort("-").isUsingProxy(false).url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").createdAt(new Date()).updatedAt(new Date()).build());
-        Mockito.when(gatewayParameterChannelRepo.saveAndFlush(ArgumentMatchers.any(GatewayParameterChannel.class))).thenReturn(GatewayParameterChannel.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC_UPDATE").proxyIp("-").proxyPort("-").isUsingProxy(false).url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").createdAt(new Date()).updatedAt(new Date()).build());
+        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpIdAndPaymentType(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(GatewayParameterChannel.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC").paymentType("-").proxyIp("-").proxyPort("-").isUsingProxy(false).url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").createdAt(new Date()).updatedAt(new Date()).build());
+        Mockito.when(gatewayParameterChannelRepo.saveAndFlush(ArgumentMatchers.any(GatewayParameterChannel.class))).thenReturn(GatewayParameterChannel.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC_UPDATE").paymentType("-").proxyIp("-").proxyPort("-").isUsingProxy(false).url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").createdAt(new Date()).updatedAt(new Date()).build());
 
         GatewayParameterRequest request = GatewayParameterRequest.builder().build();
         request.setTransCode("95477");
         request.setSystemIdOrMcpId("PIHC_PKC_UPDATE");
+        request.setPaymentType("-");
         request.setIsUsingProxy(false);
         request.setProxyIp("-");
         request.setProxyPort("-");
@@ -108,7 +109,7 @@ class GatewayParameterServiceTest {
 
     @Test
     void updateNotFound() {
-        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(null);
+        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpIdAndPaymentType(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(null);
 
         ResponseEntity<ResponseService> response = gatewayParameterService.update(GatewayParameterRequest.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC_UPDATE").isUsingProxy(false).proxyIp("-").proxyPort("-").url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").build());
         Assertions.assertNotNull(response);
@@ -120,11 +121,11 @@ class GatewayParameterServiceTest {
 
     @Test
     void delete() {
-        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(GatewayParameterChannel.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC").proxyIp("-").proxyPort("-").isUsingProxy(false).url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").createdAt(new Date()).updatedAt(new Date()).build());
+        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpIdAndPaymentType(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(GatewayParameterChannel.builder().transCode("95477").systemIdOrMcpId("PIHC_PKC").proxyIp("-").proxyPort("-").isUsingProxy(false).url("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry").createdAt(new Date()).updatedAt(new Date()).build());
 
         Mockito.when(cacheService.reloadByKey(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(ResponseUtil.setResponse(RestConstants.RESPONSE.APPROVED, true, ""));
 
-        ResponseEntity<ResponseService> response = gatewayParameterService.delete("95477", "PIHC_PKC");
+        ResponseEntity<ResponseService> response = gatewayParameterService.delete("95477", "PIHC_PKC", "-");
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -134,9 +135,9 @@ class GatewayParameterServiceTest {
 
     @Test
     void deleteNotFound() {
-        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpId(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(null);
+        Mockito.when(gatewayParameterChannelRepo.findByTransCodeAndSystemIdOrMcpIdAndPaymentType(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(null);
 
-        ResponseEntity<ResponseService> response = gatewayParameterService.delete("95477", "PIHC_PKC");
+        ResponseEntity<ResponseService> response = gatewayParameterService.delete("95477", "PIHC_PKC", "-");
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -145,14 +146,14 @@ class GatewayParameterServiceTest {
     }
 
     @Test
-    void findByTransCodeAndSystemIdOrmcpId() {
+    void findByTransCodeAndSystemIdOrmcpIdAndPaymentType() {
         GatewayParameterRequest gatewayParameterRequest = new GatewayParameterRequest();
         gatewayParameterRequest.setTransCode("95477");
         gatewayParameterRequest.setSystemIdOrMcpId("PIHC_PKC");
         gatewayParameterRequest.setUrl("http://mhp-pihc-pkc-inquiry.mhp.svc.cluster.local:8080/mhp/pihc-pkc-inquiry");
         Mockito.when(parameterLoader.getGatewayParam(ArgumentMatchers.anyString())).thenReturn(gatewayParameterRequest);
 
-        ResponseEntity<ResponseService> response = gatewayParameterService.findByTransCodeAndSystemIdOrmcpId("95477", "PIHC_PKC");
+        ResponseEntity<ResponseService> response = gatewayParameterService.findByTransCodeAndSystemIdOrmcpIdAndPaymentType("95477", "PIHC_PKC", "");
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -164,10 +165,10 @@ class GatewayParameterServiceTest {
     }
 
     @Test
-    void findByTransCodeAndSystemIdOrmcpIdNotFound() {
+    void findByTransCodeAndSystemIdOrmcpIdAndPaymentTypeNotFound() {
         Mockito.when(parameterLoader.getGatewayParam(ArgumentMatchers.anyString())).thenReturn(null);
 
-        ResponseEntity<ResponseService> response = gatewayParameterService.findByTransCodeAndSystemIdOrmcpId("95477", "PIHC_PKC");
+        ResponseEntity<ResponseService> response = gatewayParameterService.findByTransCodeAndSystemIdOrmcpIdAndPaymentType("95477", "PIHC_PKC", "");
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

@@ -6,7 +6,7 @@ public class RestUtil {
     private RestUtil() {
     }
 
-    public static DecimalFormat df = new DecimalFormat("###");
+    public static final DecimalFormat df = new DecimalFormat("###");
 
     public enum RESPONSE_ICONS {
         LACK_OF_FUND("0398", "Saldo rekening tidak mencukupi untuk melakukan transaksi. Info BNI Call 1500046");
@@ -116,23 +116,5 @@ public class RestUtil {
             if (channels.getName().equals(channelName)) channelId = channels.getCode();
         }
         return channelId;
-    }
-
-    public static boolean doValidateDateUsingRegex(String date) {
-        String regex = "\\d{4}-\\d{2}-\\d{2}";
-        boolean isValidate = false;
-        if (date.matches(regex)) {
-            isValidate = true;
-        }
-        return isValidate;
-    }
-
-    public static boolean doValidateTimeUsingRegex(String time) {
-        String regex = "\\d{2}:\\d{2}:\\d{2}";
-        boolean isValidate = false;
-        if (time.matches(regex)) {
-            isValidate = true;
-        }
-        return isValidate;
     }
 }

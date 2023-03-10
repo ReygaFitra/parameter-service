@@ -14,4 +14,5 @@ import java.io.Serializable;
 public class GatewayParameterChannelId implements Serializable {
     private String transCode;
     private String systemIdOrMcpId;
+    private String paymentType;
 }
