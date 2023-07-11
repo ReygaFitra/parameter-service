@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "GATEWAY_PARAMETER_CHANNEL_NEW")
+@Entity(name = "GATEWAY_PARAMETER_CHANNEL")
 @IdClass(GatewayParameterChannelId.class)
 public class GatewayParameterChannel {
     @Id
