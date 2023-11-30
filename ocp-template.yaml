@@ -1,0 +1,160 @@
+kind: Template
+apiVersion: template.openshift.io/v1
+metadata:
+  name: ocp-template
+objects:
+  - apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      labels:
+        app: parameter-service
+        app.kubernetes.io/component: parameter-service
+        app.kubernetes.io/instance: parameter-service
+        app.kubernetes.io/name: parameter-service
+        app.kubernetes.io/part-of: parameter-app
+      name: parameter-service
+      namespace: ${NS_NAME}
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+    spec:
+      replicas: 1
+      revisionHistoryLimit: 5
+      selector:
+        app: parameter-service
+        deploymentconfig: parameter-service
+      strategy:
+        activeDeadlineSeconds: 21600
+        resources: {}
+        rollingParams:
+          intervalSeconds: 1
+          maxSurge: 25%
+          maxUnavailable: 25%
+          timeoutSeconds: 600
+          updatePeriodSeconds: 1
+        type: Rolling
+      template:
+        metadata:
+          labels:
+            app: parameter-service
+            deploymentconfig: parameter-service
+        spec:
+          containers:
+            - image: ${IMAGE_NAME}
+              imagePullPolicy: Always
+              name: parameter-service
+              env:
+                - name: TZ
+                  value: Asia/Jakarta
+              envFrom:
+                - configMapRef:
+                    name: parameter-service-cm
+              resources:
+                limits:
+                  cpu: 300m
+                  memory: 456Mi
+                requests:
+                  cpu: 100m
+                  memory: 200Mi
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+              readinessProbe:
+                httpGet:
+                  path: /actuator/health/readiness
+                  port: 8080
+                failureThreshold: 3
+                initialDelaySeconds: 120
+                periodSeconds: 120
+              livenessProbe:
+                httpGet:
+                  path: /actuator/health/liveness
+                  port: 8080
+                failureThreshold: 3
+                initialDelaySeconds: 90
+                periodSeconds: 90
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+      triggers:
+        - type: ConfigChange
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: parameter-service-cm
+      namespace: ${NS_NAME}
+    data:
+      DB_HOST: 192.168.143.93
+      DB_PORT: 1686
+      DB_SID: SOASYSQA
+      DB_USER: soa_app
+      DB_PASS: soaapp123
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redispw
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: parameter-service
+      namespace: ${NS_NAME}
+      labels:
+        app: parameter-service
+        app.kubernetes.io/component: parameter-service
+        app.kubernetes.io/instance: parameter-service
+        app.kubernetes.io/name: parameter-service
+        app.kubernetes.io/part-of: parameter-app
+    spec:
+      selector:
+        app: parameter-service
+      ports:
+        - name: 8080-tcp
+          protocol: TCP
+          port: 8080
+          targetPort: 8080
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: parameter-service
+      namespace: ${NS_NAME}
+      labels:
+        app: parameter-service
+        app.kubernetes.io/component: parameter-service
+        app.kubernetes.io/instance: parameter-service
+        app.kubernetes.io/name: parameter-service
+        app.kubernetes.io/part-of: parameter-app
+    spec:
+      port:
+        targetPort: 8080-tcp
+      to:
+        kind: Service
+        name: parameter-service
+        weight: 100
+      wildcardPolicy: None
+  - apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: parameter-service
+      namespace: ${NS_NAME}
+    spec:
+      scaleTargetRef:
+        apiVersion: apps.openshift.io/v1
+        kind: DeploymentConfig
+        name: parameter-service
+      minReplicas: 1
+      maxReplicas: 3
+      metrics:
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              averageUtilization: 75
+              type: Utilization
+parameters:
+  - name: NS_NAME
+    description: namespace name
+    required: true
+  - name: IMAGE_NAME
+    description: image name
+    required: true
+---
+# oc process -f my-template.yml -p SERVICE_APP_NAME=parameter-service-service -p APP_NAME=parameter-app -p NS_NAME=wss -p IMAGE_NAME="jtl-tkgiharbor.hq.bni.co.id/wss-dev/parameter-service:cr200" | oc apply -f -
