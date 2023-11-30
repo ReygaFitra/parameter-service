@@ -59,7 +59,7 @@ objects:
               terminationMessagePolicy: File
               readinessProbe:
                 httpGet:
-                  path: /actuator/health/readiness
+                  path: /db/health/readiness
                   port: 8080
                 failureThreshold: 3
                 initialDelaySeconds: 120
@@ -84,13 +84,13 @@ objects:
       name: parameter-service-cm
       namespace: ${NS_NAME}
     data:
-      DB_HOST: 192.168.143.93
-      DB_PORT: 1686
+      DB_HOST: "192.168.143.93"
+      DB_PORT: "1686"
       DB_SID: SOASYSQA
       DB_USER: soa_app
       DB_PASS: soaapp123
       REDIS_HOST: localhost
-      REDIS_PORT: 6379
+      REDIS_PORT: "6379"
       REDIS_PASSWORD: redispw
   - apiVersion: v1
     kind: Service

@@ -64,7 +64,7 @@ public class KeyParameterService {
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         keyParameterRepo.delete(keyParameter);
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, key), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.KEY_PARAMETER, key), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByKey(String key) {
