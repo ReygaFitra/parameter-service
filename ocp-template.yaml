@@ -76,8 +76,6 @@ objects:
           schedulerName: default-scheduler
           securityContext: {}
           terminationGracePeriodSeconds: 30
-      triggers:
-        - type: ConfigChange
   - apiVersion: v1
     kind: ConfigMap
     metadata:
