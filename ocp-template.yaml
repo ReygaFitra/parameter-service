@@ -82,11 +82,11 @@ objects:
       name: parameter-service-cm
       namespace: ${NS_NAME}
     data:
-      DB_HOST: "192.168.143.93"
-      DB_PORT: "1686"
-      DB_SID: SOASYSQA
-      DB_USER: soa_app
-      DB_PASS: soaapp123
+      DB_HOST: localhost
+      DB_PORT: "1521"
+      DB_SID: xe
+      DB_USER: local
+      DB_PASS: pw
       REDIS_HOST: localhost
       REDIS_PORT: "6379"
       REDIS_PASSWORD: redispw
