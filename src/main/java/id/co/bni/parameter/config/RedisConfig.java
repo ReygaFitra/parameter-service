@@ -1,6 +1,7 @@
 package id.co.bni.parameter.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,20 +15,14 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @EnableCaching
+@AllArgsConstructor
 public class RedisConfig {
-    @Value("${spring.redis.host}")
-    private String redisHost;
-
-    @Value("${spring.redis.port}")
-    private String redisPort;
-
-    @Value("${spring.redis.password}")
-    private String redisPassword;
+    private final RedisProperties properties;
 
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, Integer.parseInt(redisPort));
-        configuration.setPassword(redisPassword);
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(properties.getHost(), properties.getPort());
+        configuration.setPassword(properties.getPassword());
         JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder().build();
         JedisConnectionFactory connectionFactory = new JedisConnectionFactory(configuration, jedisClientConfiguration);
         connectionFactory.afterPropertiesSet();
@@ -42,7 +37,6 @@ public class RedisConfig {
         redisTemplate.setHashValueSerializer(new JdkSerializationRedisSerializer());
         redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
         redisTemplate.setConnectionFactory(jedisConnectionFactory());
-        redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
 }

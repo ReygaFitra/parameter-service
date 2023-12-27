@@ -1,13 +1,13 @@
 package id.co.bni.parameter.dto.request;
 
 import id.co.bni.parameter.validation.annotation.NumberOnly;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data

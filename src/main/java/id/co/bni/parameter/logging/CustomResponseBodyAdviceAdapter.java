@@ -1,6 +1,7 @@
 package id.co.bni.parameter.logging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -12,7 +13,6 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @ControllerAdvice
@@ -23,16 +23,16 @@ public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Objec
     private final LoggingService loggingService;
 
     @Override
-    public boolean supports(@NotNull MethodParameter returnType, @NotNull Class converterType) {
+    public boolean supports(@NonNull MethodParameter returnType, @NonNull Class converterType) {
         return true;
     }
 
     @Override
-    public Object beforeBodyWrite(Object body, @NotNull MethodParameter returnType,
-                                  @NotNull MediaType selectedContentType, @NotNull Class selectedConverterType,
-                                  @NotNull ServerHttpRequest request, @NotNull ServerHttpResponse response) {
+    public Object beforeBodyWrite(Object body, @NonNull MethodParameter returnType,
+                                  @NonNull MediaType selectedContentType, @NonNull Class selectedConverterType,
+                                  @NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response) {
 
-        if (request instanceof ServletServerHttpRequest && response instanceof ServletServerHttpResponse) {
+        if (request instanceof ServletServerHttpRequest req && response instanceof ServletServerHttpResponse res) {
             String str = "";
             try {
                 str = new ObjectMapper().writeValueAsString(body);
@@ -42,10 +42,8 @@ public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Objec
 
             final String bodyStr = str;
             Optional.ofNullable(body).ifPresentOrElse(value ->
-                            loggingService.logResponse(((ServletServerHttpRequest) request).getServletRequest(),
-                                    ((ServletServerHttpResponse) response).getServletResponse(), bodyStr),
-                    () -> loggingService.logResponse(((ServletServerHttpRequest) request).getServletRequest(),
-                            ((ServletServerHttpResponse) response).getServletResponse(), body));
+                            loggingService.logResponse(req.getServletRequest(), res.getServletResponse(), bodyStr),
+                    () -> loggingService.logResponse(req.getServletRequest(), res.getServletResponse(), body));
         }
         return body;
     }

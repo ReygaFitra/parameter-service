@@ -1,9 +1,8 @@
 package id.co.bni.parameter.validation;
 
 import id.co.bni.parameter.validation.annotation.NumberOnly;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class NumberOnlyValidator implements ConstraintValidator<NumberOnly, String> {
 

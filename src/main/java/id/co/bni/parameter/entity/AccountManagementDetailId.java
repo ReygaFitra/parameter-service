@@ -12,6 +12,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class AccountManagementDetailId implements Serializable {
+    private String companyId;
     private String dbAccount;
-    private String dbAccountName;
 }

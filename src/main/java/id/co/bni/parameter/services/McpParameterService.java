@@ -13,13 +13,13 @@ import id.co.bni.parameter.repository.McpParameterFeeRepo;
 import id.co.bni.parameter.repository.McpParameterRepo;
 import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
@@ -126,7 +126,7 @@ public class McpParameterService {
         List<McpParameterDetail> listDet = mcpParameterDetailRepo.findByMcpId(mcpId);
         if (listDet != null && !listDet.isEmpty()) mcpParameterDetailRepo.deleteAll(listDet);
 
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.MCP_PARAMETER, mcpId), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.MCP_PARAMETER.getValue(), mcpId), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByMcpId(String mcpId) {
@@ -144,6 +144,6 @@ public class McpParameterService {
     private void loadCache(McpParameter mcpParameter, List<McpParameterFeeResponse> listFee, List<McpParameterDetailResponse> listDet) {
         ConcurrentHashMap<String, McpParameterRequest> hMcpParameter = new ConcurrentHashMap<>();
         hMcpParameter.put(mcpParameter.getMcpId(), mcpParameter.toMcpParameterResponse(listFee, listDet));
-        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.MCP_PARAMETER, mcpParameter.getMcpId(), hMcpParameter);
+        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.MCP_PARAMETER.getValue(), mcpParameter.getMcpId(), hMcpParameter);
     }
 }

@@ -1,13 +1,13 @@
 package id.co.bni.parameter.logging;
 
 import id.co.bni.parameter.util.RestConstants;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @Slf4j
@@ -20,10 +20,10 @@ public class LoggingServiceImpl implements LoggingService {
 
         MDC.clear();
         Map<String, String> headers = buildHeadersMap(httpServletRequest);
-        if(generateIdHeader(httpServletRequest, RestConstants.HEADER_NAME.REQUEST_ID))
-            headers.put(RestConstants.HEADER_NAME.REQUEST_ID, MDC.get(RestConstants.HEADER_NAME.REQUEST_ID));
-        if(generateIdHeader(httpServletRequest,RestConstants.HEADER_NAME.CORRELATION_ID))
-            headers.put(RestConstants.HEADER_NAME.CORRELATION_ID, MDC.get(RestConstants.HEADER_NAME.CORRELATION_ID));
+        if(generateIdHeader(httpServletRequest, RestConstants.HEADER_NAME.REQUEST_ID.getValue()))
+            headers.put(RestConstants.HEADER_NAME.REQUEST_ID.getValue(), MDC.get(RestConstants.HEADER_NAME.REQUEST_ID.getValue()));
+        if(generateIdHeader(httpServletRequest,RestConstants.HEADER_NAME.CORRELATION_ID.getValue()))
+            headers.put(RestConstants.HEADER_NAME.CORRELATION_ID.getValue(), MDC.get(RestConstants.HEADER_NAME.CORRELATION_ID.getValue()));
 
         stringBuilder.append("REQUEST ");
         stringBuilder.append("method=[").append(httpServletRequest.getMethod()).append("] ");
@@ -46,10 +46,10 @@ public class LoggingServiceImpl implements LoggingService {
         StringBuilder stringBuilder = new StringBuilder();
 
         Map<String, String> headers = buildHeadersMap(httpServletResponse);
-        if(!StringUtils.hasLength(httpServletResponse.getHeader(RestConstants.HEADER_NAME.REQUEST_ID)))
-            headers.put(RestConstants.HEADER_NAME.REQUEST_ID, MDC.get(RestConstants.HEADER_NAME.REQUEST_ID));
-        if(!StringUtils.hasLength(httpServletResponse.getHeader(RestConstants.HEADER_NAME.CORRELATION_ID)))
-            headers.put(RestConstants.HEADER_NAME.CORRELATION_ID, MDC.get(RestConstants.HEADER_NAME.CORRELATION_ID));
+        if(!StringUtils.hasLength(httpServletResponse.getHeader(RestConstants.HEADER_NAME.REQUEST_ID.getValue())))
+            headers.put(RestConstants.HEADER_NAME.REQUEST_ID.getValue(), MDC.get(RestConstants.HEADER_NAME.REQUEST_ID.getValue()));
+        if(!StringUtils.hasLength(httpServletResponse.getHeader(RestConstants.HEADER_NAME.CORRELATION_ID.getValue())))
+            headers.put(RestConstants.HEADER_NAME.CORRELATION_ID.getValue(), MDC.get(RestConstants.HEADER_NAME.CORRELATION_ID.getValue()));
 
         stringBuilder.append("RESPONSE ");
         stringBuilder.append("method=[").append(httpServletRequest.getMethod()).append("] ");

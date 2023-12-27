@@ -7,13 +7,13 @@ import id.co.bni.parameter.entity.KeyParameter;
 import id.co.bni.parameter.repository.KeyParameterRepo;
 import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,7 +64,7 @@ public class KeyParameterService {
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         keyParameterRepo.delete(keyParameter);
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.KEY_PARAMETER, key), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.KEY_PARAMETER.getValue(), key), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByKey(String key) {
@@ -84,6 +84,6 @@ public class KeyParameterService {
     private void loadCache(KeyParameter keyParameter) {
         ConcurrentHashMap<String, KeyParameterRequest> hKeyParameter = new ConcurrentHashMap<>();
         hKeyParameter.put(keyParameter.getKey(), keyParameter.toKeyParameterResponse());
-        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.KEY_PARAMETER, keyParameter.getKey(), hKeyParameter);
+        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.KEY_PARAMETER.getValue(), keyParameter.getKey(), hKeyParameter);
     }
 }

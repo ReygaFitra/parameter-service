@@ -2,7 +2,7 @@ package id.co.bni.parameter.entity;
 
 import id.co.bni.parameter.dto.request.AccountDetailRequest;
 import id.co.bni.parameter.dto.request.AccountManagementRequest;
-import id.co.bni.parameter.dto.response.McpParameterFeeResponse;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 

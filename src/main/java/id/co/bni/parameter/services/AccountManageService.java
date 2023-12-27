@@ -10,13 +10,13 @@ import id.co.bni.parameter.repository.AccountManageDetailRepo;
 import id.co.bni.parameter.repository.AccountManageRepo;
 import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -96,7 +96,7 @@ public class AccountManageService {
         List<AccountManagementDetail> listDet = accountManageDetailRepo.findByCompanyId(companyId);
         if (listDet != null && !listDet.isEmpty()) accountManageDetailRepo.deleteAll(listDet);
 
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT, companyId), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT.getValue(), companyId), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByCompanyId(String companyId) {
@@ -116,6 +116,6 @@ public class AccountManageService {
     private void loadCache(AccountManagement accountManagement, List<AccountDetailRequest> listAccount) {
         ConcurrentHashMap<String, AccountManagementRequest> hAccountManagement = new ConcurrentHashMap<>();
         hAccountManagement.put(accountManagement.getCompanyId(), accountManagement.toAccountManagementResponse(listAccount));
-        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT, accountManagement.getCompanyId(), hAccountManagement);
+        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT.getValue(), accountManagement.getCompanyId(), hAccountManagement);
     }
 }

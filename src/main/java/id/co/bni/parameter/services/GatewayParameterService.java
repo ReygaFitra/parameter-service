@@ -8,13 +8,13 @@ import id.co.bni.parameter.entity.GatewayParameterChannelId;
 import id.co.bni.parameter.repository.GatewayParameterChannelRepo;
 import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
@@ -81,7 +81,7 @@ public class GatewayParameterService {
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         gatewayParameterChannelRepo.delete(channel);
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, transCode+systemIdOrmcpId), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.GATEWAY_PARAMETER.getValue(), transCode+systemIdOrmcpId), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByTransCodeAndSystemIdOrmcpIdAndPaymentType(String transCode, String systemIdOrmcpId, String paymentType) {
@@ -99,6 +99,6 @@ public class GatewayParameterService {
     private void loadCache(GatewayParameterChannel gatewayParameterChannel) {
         ConcurrentHashMap<String, GatewayParameterRequest> hGatewayParameter = new ConcurrentHashMap<>();
         hGatewayParameter.put(gatewayParameterChannel.getTransCode()+gatewayParameterChannel.getSystemIdOrMcpId()+gatewayParameterChannel.getPaymentType(), gatewayParameterChannel.toGatewayParameterResponse());
-        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, gatewayParameterChannel.getTransCode()+gatewayParameterChannel.getSystemIdOrMcpId()+gatewayParameterChannel.getPaymentType(), hGatewayParameter);
+        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.GATEWAY_PARAMETER.getValue(), gatewayParameterChannel.getTransCode()+gatewayParameterChannel.getSystemIdOrMcpId()+gatewayParameterChannel.getPaymentType(), hGatewayParameter);
     }
 }

@@ -8,13 +8,13 @@ import id.co.bni.parameter.entity.ChannelParameterId;
 import id.co.bni.parameter.repository.ChannelParameterRepo;
 import id.co.bni.parameter.util.ResponseUtil;
 import id.co.bni.parameter.util.RestConstants;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
@@ -73,7 +73,7 @@ public class ChannelParameterService {
             return new ResponseEntity<>(ResponseUtil.setResponse(RestConstants.RESPONSE.DATA_NOT_FOUND, null, ""), HttpStatus.NOT_FOUND);
 
         channelParameterRepo.delete(channel);
-        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.CHANNEL_PARAMETER, channelId + systemId), HttpStatus.OK);
+        return new ResponseEntity<>(cacheService.reloadByKey(RestConstants.CACHE_NAME.CHANNEL_PARAMETER.getValue(), channelId + systemId), HttpStatus.OK);
     }
 
     public ResponseEntity<ResponseService> findByChannelIdAndSystemId(String channelId, String systemId) {
@@ -93,6 +93,6 @@ public class ChannelParameterService {
     private void loadCache(ChannelParameter channelParameter) {
         ConcurrentHashMap<String, ChannelParameterRequest> hChannelParameter = new ConcurrentHashMap<>();
         hChannelParameter.put(channelParameter.getChannelId() + channelParameter.getSystemId(), channelParameter.toChannelParameterResponse());
-        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.CHANNEL_PARAMETER, channelParameter.getChannelId() + channelParameter.getSystemId(), hChannelParameter);
+        parameterLoader.clearAndPut(RestConstants.CACHE_NAME.CHANNEL_PARAMETER.getValue(), channelParameter.getChannelId() + channelParameter.getSystemId(), hChannelParameter);
     }
 }

@@ -1,0 +1,235 @@
+[
+  {
+    "name":"org.aspectj.lang.annotation.Around",
+    "queryAllDeclaredMethods":true,
+    "methods":[{"name":"argNames","parameterTypes":[] }, {"name":"pointcut","parameterTypes":[] }, {"name":"value","parameterTypes":[] }]
+  },
+  {
+    "name":"org.aspectj.lang.annotation.Aspect",
+    "queryAllDeclaredMethods":true
+  },
+  {
+    "name": "com.fasterxml.jackson.databind.ObjectMapper",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name":"id.co.bni.mpn.MpnInquiryServiceApplication",
+    "allDeclaredFields":true,
+    "allDeclaredClasses":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"main","parameterTypes":["java.lang.String[]"] }, {"name":"setBeanFactory","parameterTypes":["org.springframework.beans.factory.BeanFactory"] }]
+  },
+  {
+    "name":"id.co.bni.mpn.MpnInquiryServiceApplication$$SpringCGLIB$$0",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "fields":[{"name":"CGLIB$FACTORY_DATA"}],
+    "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"CGLIB$SET_STATIC_CALLBACKS","parameterTypes":["org.springframework.cglib.proxy.Callback[]"] }, {"name":"CGLIB$SET_THREAD_CALLBACKS","parameterTypes":["org.springframework.cglib.proxy.Callback[]"] }]
+  },
+  {
+    "name":"id.co.bni.mpn.config.AspectConfig",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":[] }]
+  },
+  {
+    "name":"id.co.bni.mpn.config.RedisConfig",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":["org.springframework.boot.autoconfigure.data.redis.RedisProperties"] }, {"name":"jedisConnectionFactory","parameterTypes":[] }, {"name":"redisTemplate","parameterTypes":[] }, {"name":"setBeanFactory","parameterTypes":["org.springframework.beans.factory.BeanFactory"] }]
+  },
+  {
+    "name":"id.co.bni.mpn.config.RedisConfig$$SpringCGLIB$$0",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "fields":[{"name":"CGLIB$FACTORY_DATA"}],
+    "methods":[{"name":"<init>","parameterTypes":["org.springframework.boot.autoconfigure.data.redis.RedisProperties"] }, {"name":"CGLIB$SET_STATIC_CALLBACKS","parameterTypes":["org.springframework.cglib.proxy.Callback[]"] }, {"name":"CGLIB$SET_THREAD_CALLBACKS","parameterTypes":["org.springframework.cglib.proxy.Callback[]"] }, {"name":"jedisConnectionFactory","parameterTypes":[] }, {"name":"redisTemplate","parameterTypes":[] }]
+  },
+  {
+    "name":"id.co.bni.mpn.config.RedisConfig$$SpringCGLIB$$1",
+    "methods":[{"name":"<init>","parameterTypes":["java.lang.Class"] }]
+  },
+  {
+    "name":"id.co.bni.mpn.config.RedisConfig$$SpringCGLIB$$2",
+    "methods":[{"name":"<init>","parameterTypes":["java.lang.Class"] }]
+  },
+  {
+    "name":"id.co.bni.mpn.controller.InquiryBalanceController",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":["id.co.bni.mpn.service.InquiryBalanceService"] }]
+  },
+  {
+    "name":"id.co.bni.mpn.controller.InquiryBalanceController$$SpringCGLIB$$0"
+  },
+  {
+    "name":"id.co.bni.mpn.controller.ReadinessController",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":["id.co.bni.mpn.service.ReadinessService"] }]
+  },
+  {
+    "name":"id.co.bni.mpn.controller.ReadinessController$$SpringCGLIB$$0"
+  },
+  {
+    "name":"id.co.bni.mpn.dto.request.InquiryRequest"
+  },
+  {
+    "name":"id.co.bni.mpn.job.InquiryBalanceScheduler",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":["id.co.bni.mpn.service.InquiryBalanceService"] }]
+  },
+  {
+    "name":"id.co.bni.mpn.job.InquiryBalanceScheduler$$SpringCGLIB$$0"
+  },
+  {
+    "name":"id.co.bni.mpn.model.BankStatementMpn",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllPublicMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"equals","parameterTypes":["java.lang.Object"] }, {"name":"getId","parameterTypes":[] }, {"name":"isAccountNum","parameterTypes":[] }, {"name":"isAmount","parameterTypes":[] }, {"name":"isBillingCode","parameterTypes":[] }, {"name":"isCcyAmount","parameterTypes":[] }, {"name":"isCreatedAt","parameterTypes":[] }, {"name":"isCurrBal","parameterTypes":[] }, {"name":"isId","parameterTypes":[] }, {"name":"isNoSakti","parameterTypes":[] }, {"name":"isNtpn","parameterTypes":[] }, {"name":"isTranCode","parameterTypes":[] }, {"name":"isTranDate","parameterTypes":[] }, {"name":"isTranTime","parameterTypes":[] }, {"name":"isTranType","parameterTypes":[] }, {"name":"isUpdatedAt","parameterTypes":[] }, {"name":"setId","parameterTypes":["java.lang.Integer"] }]
+  },
+  {
+    "name":"id.co.bni.mpn.model.BankStatementMpn_"
+  },
+  {
+    "name":"id.co.bni.mpn.model.InquiryBalanceModel",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllPublicMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"equals","parameterTypes":["java.lang.Object"] }, {"name":"getAccountNum","parameterTypes":[] }, {"name":"isAccountNum","parameterTypes":[] }, {"name":"isBalance","parameterTypes":[] }, {"name":"isCreatedDate","parameterTypes":[] }, {"name":"isStatus","parameterTypes":[] }, {"name":"setAccountNum","parameterTypes":["java.lang.String"] }]
+  },
+  {
+    "name":"id.co.bni.mpn.model.InquiryBalanceModel_"
+  },
+  {
+    "name":"id.co.bni.mpn.repository.BankStatementMpnRepository",
+    "queryAllDeclaredMethods":true,
+    "queryAllPublicMethods":true
+  },
+  {
+    "name":"id.co.bni.mpn.repository.InquiryBalanceRepository",
+    "queryAllDeclaredMethods":true,
+    "queryAllPublicMethods":true,
+    "queryAllDeclaredConstructors":true
+  },
+  {
+    "name":"id.co.bni.mpn.service.InquiryBalanceService",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":["id.co.bni.mpn.utils.GenerateResponse","com.fasterxml.jackson.databind.ObjectMapper","org.springframework.data.redis.core.RedisTemplate","id.co.bni.mpn.repository.InquiryBalanceRepository"] }]
+  },
+  {
+    "name":"id.co.bni.mpn.service.InquiryBalanceService$$SpringCGLIB$$0"
+  },
+  {
+    "name":"id.co.bni.mpn.service.ReadinessService",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":[] }]
+  },
+  {
+    "name":"id.co.bni.mpn.service.ReadinessService$$SpringCGLIB$$0"
+  },
+  {
+    "name":"id.co.bni.mpn.utils.GenerateResponse",
+    "allDeclaredFields":true,
+    "queryAllDeclaredMethods":true,
+    "queryAllDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":[] }]
+  },
+  {
+    "name": "org.hibernate.dialect.OracleArrayJdbcTypeConstructor",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "org.hibernate.dialect.OracleNestedTableJdbcTypeConstructor",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "id.co.bni.mpn.dto.response.BalanceInfoRes",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "id.co.bni.mpn.dto.response.Header",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "id.co.bni.mpn.dto.response.InquiryResponse",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "id.co.bni.mpn.dto.response.Response",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "id.co.bni.mpn.dto.response.RestResponse",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "id.co.bni.mpn.dto.response.TransactionResponse",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "org.glassfish.jaxb.runtime.v2.runtime.property.SingleElementNodeProperty",
+    "allDeclaredConstructors": true
+  }
+]

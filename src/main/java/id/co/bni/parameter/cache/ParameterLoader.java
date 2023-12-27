@@ -9,6 +9,7 @@ import id.co.bni.parameter.entity.McpParameterFee;
 import id.co.bni.parameter.repository.*;
 import id.co.bni.parameter.util.RestConstants;
 import id.co.bni.parameter.util.RestUtil;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,8 +36,11 @@ public class ParameterLoader {
     private final AccountManageDetailRepo accountManageDetailRepo;
     private final RedisTemplate<String, String> redisTemplate;
 
+    @Resource
+    private ParameterLoader parameterLoaderResource;
+
     @Async
-    void load() {
+    public void load() {
         loadGatewayParameter();
         loadMcpParameter();
         loadChannelParameter();
@@ -57,7 +61,7 @@ public class ParameterLoader {
             log.error(e.getMessage(), e);
             throw e;
         }
-        clearPackHazelcast(RestConstants.CACHE_NAME.GATEWAY_PARAMETER, hGatewayParameter);
+        clearPackHazelcast(RestConstants.CACHE_NAME.GATEWAY_PARAMETER.getValue(), hGatewayParameter);
     }
 
     private void loadMcpParameter() {
@@ -100,7 +104,7 @@ public class ParameterLoader {
             log.error(e.getMessage(), e);
             throw e;
         }
-        clearPackHazelcast(RestConstants.CACHE_NAME.MCP_PARAMETER, hMcpParameter);
+        clearPackHazelcast(RestConstants.CACHE_NAME.MCP_PARAMETER.getValue(), hMcpParameter);
     }
 
     private void loadChannelParameter() {
@@ -113,7 +117,7 @@ public class ParameterLoader {
             log.error(e.getMessage(), e);
             throw e;
         }
-        clearPackHazelcast(RestConstants.CACHE_NAME.CHANNEL_PARAMETER, hChannelParameter);
+        clearPackHazelcast(RestConstants.CACHE_NAME.CHANNEL_PARAMETER.getValue(), hChannelParameter);
     }
 
     private void loadKeyParameter() {
@@ -125,7 +129,7 @@ public class ParameterLoader {
             log.error(e.getMessage(), e);
             throw e;
         }
-        clearPackHazelcast(RestConstants.CACHE_NAME.KEY_PARAMETER, hKeyParameter);
+        clearPackHazelcast(RestConstants.CACHE_NAME.KEY_PARAMETER.getValue(), hKeyParameter);
     }
 
     private void loadAccountParameter() {
@@ -152,7 +156,7 @@ public class ParameterLoader {
             log.error(e.getMessage(), e);
             throw e;
         }
-        clearPackHazelcast(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT, hAccountParameter);
+        clearPackHazelcast(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT.getValue(), hAccountParameter);
     }
 
     private void clearPackHazelcast(String cacheName, Map<String, ?> map) {
@@ -174,53 +178,53 @@ public class ParameterLoader {
     }
 
     public Collection<GatewayParameterRequest> getAllGatewayParam() {
-        Map<String, GatewayParameterRequest> h = (Map<String, GatewayParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.GATEWAY_PARAMETER);
+        Map<String, GatewayParameterRequest> h = (Map<String, GatewayParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.GATEWAY_PARAMETER.getValue());
         return h.values();
     }
 
     public GatewayParameterRequest getGatewayParam(String transCode) {
-        Map<String, GatewayParameterRequest> h = (Map<String, GatewayParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.GATEWAY_PARAMETER);
+        Map<String, GatewayParameterRequest> h = (Map<String, GatewayParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.GATEWAY_PARAMETER.getValue());
         return h.get(transCode);
     }
 
 
     public Collection<McpParameterRequest> getAllMcpParam() {
-        Map<String, McpParameterRequest> h = (Map<String, McpParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.MCP_PARAMETER);
+        Map<String, McpParameterRequest> h = (Map<String, McpParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.MCP_PARAMETER.getValue());
         return h.values();
     }
 
     public McpParameterRequest getMcpParam(String mcpId) {
-        Map<String, McpParameterRequest> h = (Map<String, McpParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.MCP_PARAMETER);
+        Map<String, McpParameterRequest> h = (Map<String, McpParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.MCP_PARAMETER.getValue());
         return h.get(mcpId);
     }
 
     public Collection<ChannelParameterRequest> getAllChannelParam() {
-        Map<String, ChannelParameterRequest> h = (Map<String, ChannelParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.CHANNEL_PARAMETER);
+        Map<String, ChannelParameterRequest> h = (Map<String, ChannelParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.CHANNEL_PARAMETER.getValue());
         return h.values();
     }
 
     public ChannelParameterRequest getChannelParam(String channelIdAndSystemId) {
-        Map<String, ChannelParameterRequest> h = (Map<String, ChannelParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.CHANNEL_PARAMETER);
+        Map<String, ChannelParameterRequest> h = (Map<String, ChannelParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.CHANNEL_PARAMETER.getValue());
         return h.get(channelIdAndSystemId);
     }
 
     public Collection<KeyParameterRequest> getAllKeyParam() {
-        Map<String, KeyParameterRequest> h = (Map<String, KeyParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.KEY_PARAMETER);
+        Map<String, KeyParameterRequest> h = (Map<String, KeyParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.KEY_PARAMETER.getValue());
         return h.values();
     }
 
     public KeyParameterRequest getKeyParam(String key) {
-        Map<String, KeyParameterRequest> h = (Map<String, KeyParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.KEY_PARAMETER);
+        Map<String, KeyParameterRequest> h = (Map<String, KeyParameterRequest>) checkAndGet(RestConstants.CACHE_NAME.KEY_PARAMETER.getValue());
         return h.get(key);
     }
 
     public Collection<AccountManagementRequest> getAllAccountParam() {
-        Map<String, AccountManagementRequest> h = (Map<String, AccountManagementRequest>) checkAndGet(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT);
+        Map<String, AccountManagementRequest> h = (Map<String, AccountManagementRequest>) checkAndGet(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT.getValue());
         return h.values();
     }
 
     public AccountManagementRequest getAccountParam(String key) {
-        Map<String, AccountManagementRequest> h = (Map<String, AccountManagementRequest>) checkAndGet(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT);
+        Map<String, AccountManagementRequest> h = (Map<String, AccountManagementRequest>) checkAndGet(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT.getValue());
         return h.get(key);
     }
 
@@ -228,7 +232,7 @@ public class ParameterLoader {
         Map<Object, Object> map = redisTemplate.opsForHash().entries(cacheName);
 //        Map<String, ?> map = hazelcastInstance.getMap(cacheName);
         if (map.isEmpty()) {
-            load();
+            parameterLoaderResource.load();
 //            map = hazelcastInstance.getMap(cacheName);
             map = redisTemplate.opsForHash().entries(cacheName);
         }
@@ -237,24 +241,18 @@ public class ParameterLoader {
 
     public void deleteHash(String name, String key) {
         log.info("Reload with name: {} and key: {}", name, key);
-        switch (name) {
-            case RestConstants.CACHE_NAME.GATEWAY_PARAMETER:
-                loadGatewayParameter();
-                break;
-            case RestConstants.CACHE_NAME.MCP_PARAMETER:
-                loadMcpParameter();
-                break;
-            case RestConstants.CACHE_NAME.CHANNEL_PARAMETER:
-                loadChannelParameter();
-                break;
-            case RestConstants.CACHE_NAME.KEY_PARAMETER:
-                loadKeyParameter();
-                break;
-            case RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT:
-                loadAccountParameter();
-                break;
-            default:
-                load();
+        if (name.equals(RestConstants.CACHE_NAME.GATEWAY_PARAMETER.getValue())) {
+            loadGatewayParameter();
+        } else if (name.equals(RestConstants.CACHE_NAME.MCP_PARAMETER.getValue())) {
+            loadMcpParameter();
+        } else if (name.equals(RestConstants.CACHE_NAME.CHANNEL_PARAMETER.getValue())) {
+            loadChannelParameter();
+        } else if (name.equals(RestConstants.CACHE_NAME.KEY_PARAMETER.getValue())) {
+            loadKeyParameter();
+        } else if (name.equals(RestConstants.CACHE_NAME.ACCOUNT_MANAGEMENT.getValue())) {
+            loadAccountParameter();
+        } else {
+            parameterLoaderResource.load();
         }
     }
 }

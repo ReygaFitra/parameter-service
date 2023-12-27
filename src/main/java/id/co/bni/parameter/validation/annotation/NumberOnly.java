@@ -1,9 +1,9 @@
 package id.co.bni.parameter.validation.annotation;
 
 import id.co.bni.parameter.validation.NumberOnlyValidator;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented

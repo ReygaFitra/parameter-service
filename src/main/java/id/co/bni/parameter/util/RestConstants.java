@@ -1,8 +1,11 @@
 
 package id.co.bni.parameter.util;
 
+import lombok.Getter;
+
 public class RestConstants {
 
+    @Getter
     public enum RESPONSE {
         APPROVED("00", "Approved"),
         HTTP_NO_PATH("X4", "There is No Resource Path"),
@@ -32,25 +35,31 @@ public class RestConstants {
             this.description = description;
         }
 
-        public String getCode() {
-            return this.code;
-        }
+    }
 
-        public String getDescription() {
-            return this.description;
+    @Getter
+    public enum HEADER_NAME {
+        REQUEST_ID("X-Request-ID"),
+        CORRELATION_ID("X-Correlation-ID");
+        private final String value;
+
+        HEADER_NAME(String value) {
+            this.value = value;
         }
     }
 
-    public interface HEADER_NAME {
-        String REQUEST_ID = "X-Request-ID";
-        String CORRELATION_ID = "X-Correlation-ID";
-    }
+    @Getter
+    public enum CACHE_NAME {
+        GATEWAY_PARAMETER("gateway-parameter"),
+        MCP_PARAMETER("mcp-parameter"),
+        CHANNEL_PARAMETER("channel-parameter"),
+        KEY_PARAMETER("key-parameter"),
+        ACCOUNT_MANAGEMENT("account-management"),
+        ;
+        private final String value;
 
-    public interface CACHE_NAME {
-        String GATEWAY_PARAMETER = "gateway-parameter";
-        String MCP_PARAMETER = "mcp-parameter";
-        String CHANNEL_PARAMETER = "channel-parameter";
-        String KEY_PARAMETER = "key-parameter";
-        String ACCOUNT_MANAGEMENT = "account-management";
+        CACHE_NAME(String value) {
+            this.value = value;
+        }
     }
 }

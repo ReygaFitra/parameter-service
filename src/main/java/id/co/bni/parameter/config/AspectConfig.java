@@ -16,35 +16,30 @@ public class AspectConfig {
 
     @Around("execution(* id.co.bni.parameter.services..*(..))")
     public Object interceptorForServices(ProceedingJoinPoint joinPoint) throws Throwable {
-        StopWatch stopWatch = new StopWatch();
-        String className = getMethodSignatute(joinPoint).getDeclaringType().getSimpleName();
-        String methodName = getMethodSignatute(joinPoint).getName();
-        try {
-            stopWatch.start();
-            log.info("Start Services " + className + METHOD + methodName);
-            return joinPoint.proceed();
-        } finally {
-            stopWatch.stop();
-            log.info("End Services " + className + METHOD + methodName + " " + stopWatch.getTotalTimeMillis() + " ms");
-        }
+        return startStopWatch(joinPoint, " Services ");
     }
 
     @Around("execution(* id.co.bni.parameter.controller..*(..))")
     public Object interceptorForControllers(ProceedingJoinPoint joinPoint) throws Throwable {
+        return startStopWatch(joinPoint, " Controller ");
+    }
+
+    @Around("execution(* id.co.bni.parameter.repository..*(..))")
+    public Object interceptorForRepository(ProceedingJoinPoint joinPoint) throws Throwable {
+        return startStopWatch(joinPoint, " Repository ");
+    }
+
+    private Object startStopWatch(ProceedingJoinPoint joinPoint, String desc) throws Throwable {
         StopWatch stopWatch = new StopWatch();
-        String className = getMethodSignatute(joinPoint).getDeclaringType().getSimpleName();
-        String methodName = getMethodSignatute(joinPoint).getName();
+        String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
+        String methodName = joinPoint.getSignature().getName();
         try {
             stopWatch.start();
-            log.info("Start Request " + className + METHOD + methodName);
+            log.info("Start" + desc + className + METHOD + methodName);
             return joinPoint.proceed();
         } finally {
             stopWatch.stop();
-            log.info("End Request " + className + METHOD + methodName + " " + stopWatch.getTotalTimeMillis() + " ms");
+            log.info("End" + desc + className + METHOD + methodName + " " + stopWatch.getTotalTimeMillis() + " ms");
         }
-    }
-
-    private MethodSignature getMethodSignatute(ProceedingJoinPoint joinPoint) {
-        return (MethodSignature) joinPoint.getSignature();
     }
 }
